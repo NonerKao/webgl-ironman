@@ -34,7 +34,7 @@ void main() {
   vec3 diffuse = u_diffuse + texture2D(u_texture, v_texcoord).rgb;
   vec3 normal = normalize(v_normal);
   vec3 surfaceToLightDir = normalize(-u_lightDir);
-  float diffuseBrightness = clamp(dot(surfaceToLightDir, normal), 0.0, 1.0);
+  float diffuseBrightness = clamp(dot(surfaceToLightDir, normal), 0.6, 1.0);
   gl_FragColor = vec4(diffuse * diffuseBrightness, 1);
 }
 `;
@@ -63,6 +63,7 @@ async function setup() {
     await Promise.all(Object.entries({
       wood: 'https://i.imgur.com/SJdQ7Twh.jpg',
       steel: 'https://i.imgur.com/vqKuF5Ih.jpg',
+      green: 'http://0.0.0.0:8080/red.jpeg'
     }).map(async ([name, url]) => {
       const image = await loadImage(url);
       const texture = gl.createTexture();
@@ -107,12 +108,39 @@ async function setup() {
 
   const objects = {};
 
-  { // ball
-    const attribs = twgl.primitives.createSphereVertices(1, 32, 32);
+  { // octahedron
+    const attribs1 = twgl.primitives.createCubeVertices(2);
+    const attribs = {
+      position: new Float32Array([-1, 0, 0, 0, 0, -1, 0, -1, 0,
+	                          -1, 0, 0, 0, -1, 0, 0, 0, 1,
+	                          -1, 0, 0, 0, 0, 1, 0, 1, 0,
+	                          -1, 0, 0, 0, 1, 0, 0, 0, -1,
+	                          1, 0, 0, 0, -1, 0, 0, 0, -1,
+	                          1, 0, 0, 0, 0, 1, 0, -1, 0,
+	                          1, 0, 0, 0, 1, 0, 0, 0, 1,
+	                          1, 0, 0, 0, 0, -1, 0, 1, 0,]),
+      normal: new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1,
+	                        1, 1, -1, 1, 1, -1, 1, 1, -1,
+	                        1, -1, -1, 1, -1, -1, 1, -1, -1,
+	                        1, -1, 1, 1, -1, 1, 1, -1, 1,
+	                        -1, 1, 1, -1, 1, 1, -1, 1, 1,
+	                        -1, 1, -1, -1, 1, -1, -1, 1, -1,
+	                        -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	                        -1, -1, 1, -1, -1, 1, -1, -1, 1]),
+      texcoord: new Float32Array([0, 0, 1, 0, 0, 1,
+	                          0, 0, 1, 0, 0, 1,
+	                          0, 0, 1, 0, 0, 1,
+	                          0, 0, 1, 0, 0, 1,
+	                          0, 0, 1, 0, 0, 1,
+	                          0, 0, 1, 0, 0, 1,
+	                          0, 0, 1, 0, 0, 1,
+	                          0, 0, 1, 0, 0, 1]),
+    };
+	  
     const bufferInfo = twgl.createBufferInfoFromArrays(gl, attribs);
     const vao = twgl.createVAOFromBufferInfo(gl, programInfo, bufferInfo);
 
-    objects.ball = {
+    objects.octa = {
       attribs,
       bufferInfo,
       vao,
@@ -141,7 +169,7 @@ async function setup() {
     state: {
       fieldOfView: degToRad(45),
       lightDir: [0, -1, 0],
-      cameraPosition: [0, 0, 8],
+      cameraPosition: [5, 3, 7],
       cameraVelocity: [0, 0, 0],
     },
     time: 0,
@@ -173,8 +201,8 @@ function render(app) {
     u_lightDir: state.lightDir,
   });
 
-  { // ball
-    gl.bindVertexArray(objects.ball.vao);
+  { // octahedron 
+    gl.bindVertexArray(objects.octa.vao);
 
     const worldMatrix = matrix4.multiply(
       matrix4.translate(0, 0, 0),
@@ -185,17 +213,17 @@ function render(app) {
       u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
       u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
       u_diffuse: [0, 0, 0],
-      u_texture: textures.steel,
+      u_texture: textures.green,
     });
 
-    twgl.drawBufferInfo(gl, objects.ball.bufferInfo);
+    twgl.drawBufferInfo(gl, objects.octa.bufferInfo);
   }
 
   { // ground
     gl.bindVertexArray(objects.ground.vao);
 
     const worldMatrix = matrix4.multiply(
-      matrix4.translate(0, -1, 0),
+      matrix4.translate(0, -3, 0),
       matrix4.scale(10, 1, 10),
     );
 
@@ -266,21 +294,25 @@ function degToRad(deg) {
 
 function handleKeyDown(app, event) {
   switch (event.code) {
-    case 'KeyA':
-    case 'ArrowLeft':
-      app.state.cameraVelocity[0] = -CAMERA_MOVE_SPEED;
-      break;
-    case 'KeyD':
-    case 'ArrowRight':
-      app.state.cameraVelocity[0] = CAMERA_MOVE_SPEED;
-      break;
-    case 'KeyW':
     case 'ArrowUp':
       app.state.cameraVelocity[1] = CAMERA_MOVE_SPEED;
       break;
-    case 'KeyS':
     case 'ArrowDown':
       app.state.cameraVelocity[1] = -CAMERA_MOVE_SPEED;
+      break;
+    case 'ArrowLeft':
+    case 'KeyA':
+      app.state.cameraVelocity[0] = -CAMERA_MOVE_SPEED;
+      break;
+    case 'ArrowRight':
+    case 'KeyD':
+      app.state.cameraVelocity[0] = CAMERA_MOVE_SPEED;
+      break;
+    case 'KeyW':
+      app.state.cameraVelocity[2] = -CAMERA_MOVE_SPEED;
+      break;
+    case 'KeyS':
+      app.state.cameraVelocity[2] = CAMERA_MOVE_SPEED;
       break;
   }
 }
@@ -288,16 +320,20 @@ function handleKeyDown(app, event) {
 function handleKeyUp(app, event) {
   switch (event.code) {
     case 'KeyA':
-    case 'ArrowLeft':
     case 'KeyD':
     case 'ArrowRight':
+    case 'ArrowLeft':
       app.state.cameraVelocity[0] = 0;
+      break;
+    case 'ArrowUp':
+    case 'ArrowDown':
+      app.state.cameraVelocity[1] = 0;
       break;
     case 'KeyW':
     case 'ArrowUp':
     case 'KeyS':
     case 'ArrowDown':
-      app.state.cameraVelocity[1] = 0;
+      app.state.cameraVelocity[2] = 0;
       break;
   }
 }
