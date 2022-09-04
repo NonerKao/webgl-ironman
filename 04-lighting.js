@@ -34,7 +34,7 @@ void main() {
   vec3 diffuse = u_diffuse + texture2D(u_texture, v_texcoord).rgb;
   vec3 normal = normalize(v_normal);
   vec3 surfaceToLightDir = normalize(-u_lightDir);
-  float diffuseBrightness = clamp(dot(surfaceToLightDir, normal), 0.6, 1.0);
+  float diffuseBrightness = clamp(dot(surfaceToLightDir, normal), 0.7, 1.0);
   gl_FragColor = vec4(diffuse * diffuseBrightness, 1);
 }
 `;
@@ -108,8 +108,59 @@ async function setup() {
 
   const objects = {};
 
+  { // regular tetrahedron
+    const attribs = {
+      position: new Float32Array([-1.5, -1.5, -1.5, -1.5, -0.5, -0.5, -0.5, -0.5, -1.5,
+	                          -1.5, -1.5, -1.5, -0.5, -0.5, -1.5, -0.5, -1.5, -0.5,
+	                          -1.5, -1.5, -1.5, -0.5, -1.5, -0.5, -1.5, -0.5, -0.5,
+	                          -1.5, -0.5, -0.5, -0.5, -1.5, -0.5, -0.5, -0.5, -1.5,]),
+      normal: new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1,
+	                        1, 1, -1, 1, 1, -1, 1, 1, -1,
+	                        -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	                        -1, -1, 1, -1, -1, 1, -1, -1, 1]),
+      texcoord: new Float32Array([0, 0, 1, 0, 0, 1,
+	                          0, 0, 1, 0, 0, 1,
+	                          0, 0, 1, 0, 0, 1,
+	                          0, 0, 1, 0, 0, 1]),
+    };
+	  
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, attribs);
+    const vao = twgl.createVAOFromBufferInfo(gl, programInfo, bufferInfo);
+
+    objects.rete = {
+      attribs,
+      bufferInfo,
+      vao,
+    };
+  }
+
+  { // edge tetrahedron
+    const attribs = {
+      position: new Float32Array([-1, -2, -2, 0, -2, -1, 0, -1, -2,
+	                          0, -2, -1, 1, -2, -2, 0, -1, -2,
+	                          -1, -2, -2, 1, -2, -2, 0, -2, -1,
+	                          -1, -2, -2, 0, -1, -2, 1, -2, -2,]),
+      normal: new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1,
+	                        1, 1, -1, 1, 1, -1, 1, 1, -1,
+	                        -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	                        -1, -1, 1, -1, -1, 1, -1, -1, 1]),
+      texcoord: new Float32Array([0, 0, 1, 0, 0, 1,
+	                          0, 0, 1, 0, 0, 1,
+	                          0, 0, 1, 0, 0, 1,
+	                          0, 0, 1, 0, 0, 1]),
+    };
+	  
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, attribs);
+    const vao = twgl.createVAOFromBufferInfo(gl, programInfo, bufferInfo);
+
+    objects.edte = {
+      attribs,
+      bufferInfo,
+      vao,
+    };
+  }
+
   { // octahedron
-    const attribs1 = twgl.primitives.createCubeVertices(2);
     const attribs = {
       position: new Float32Array([-1, 0, 0, 0, 0, -1, 0, -1, 0,
 	                          -1, 0, 0, 0, -1, 0, 0, 0, 1,
@@ -217,6 +268,59 @@ function render(app) {
     });
 
     twgl.drawBufferInfo(gl, objects.octa.bufferInfo);
+  }
+
+  for (var i = 0; i < 8; i++ ){ // regular tetrahedron 
+    gl.bindVertexArray(objects.rete.vao);
+
+    const worldMatrix = (i < 4) ? matrix4.multiply(
+      matrix4.translate(0, 0, 0),
+      matrix4.yRotate(degToRad(i*90)),
+      matrix4.scale(1, 1, 1),
+    ) : matrix4.multiply(
+      matrix4.translate(0, 0, 0),
+      matrix4.zRotate(degToRad(-90)),
+      matrix4.xRotate(degToRad((i-4)*90)),
+      matrix4.scale(1, 1, 1),
+    );
+
+    twgl.setUniforms(programInfo, {
+      u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
+      u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
+      u_diffuse: [0, 0, 0],
+      u_texture: textures.green,
+    });
+
+    twgl.drawBufferInfo(gl, objects.rete.bufferInfo);
+  };
+
+  for (var i = 0; i < 12; i++) { // edge tetrahedron 
+    gl.bindVertexArray(objects.edte.vao);
+
+    const worldMatrix = (i < 4) ? matrix4.multiply(
+      matrix4.translate(0, 0, 0),
+      matrix4.yRotate(degToRad(90)),
+      matrix4.zRotate(degToRad(i*90)),
+      matrix4.scale(1, 1, 1),
+    ) : (i < 8) ? matrix4.multiply(
+      matrix4.translate(0, 0, 0),
+      matrix4.xRotate(degToRad((i-4)*90)),
+      matrix4.scale(1, 1, 1),
+    ) : matrix4.multiply(
+      matrix4.translate(0, 0, 0),
+      matrix4.yRotate(degToRad(-90)),
+      matrix4.zRotate(degToRad((i-8)*90)),
+      matrix4.scale(1, 1, 1),
+    );
+
+    twgl.setUniforms(programInfo, {
+      u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
+      u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
+      u_diffuse: [0, 0, 0],
+      u_texture: textures.green,
+    });
+
+    twgl.drawBufferInfo(gl, objects.edte.bufferInfo);
   }
 
   { // ground
