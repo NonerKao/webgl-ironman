@@ -63,7 +63,9 @@ async function setup() {
     await Promise.all(Object.entries({
       wood: 'https://i.imgur.com/SJdQ7Twh.jpg',
       steel: 'https://i.imgur.com/vqKuF5Ih.jpg',
-      green: 'http://0.0.0.0:8080/red.jpeg'
+      red: 'http://0.0.0.0:8080/red.jpeg',
+      blue: 'http://0.0.0.0:8080/blue.jpeg',
+      yellow: 'http://0.0.0.0:8080/yellow.jpeg'
     }).map(async ([name, url]) => {
       const image = await loadImage(url);
       const texture = gl.createTexture();
@@ -264,7 +266,7 @@ function render(app) {
       u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
       u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
       u_diffuse: [0, 0, 0],
-      u_texture: textures.green,
+      u_texture: textures.red,
     });
 
     twgl.drawBufferInfo(gl, objects.octa.bufferInfo);
@@ -288,7 +290,7 @@ function render(app) {
       u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
       u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
       u_diffuse: [0, 0, 0],
-      u_texture: textures.green,
+      u_texture: textures.yellow,
     });
 
     twgl.drawBufferInfo(gl, objects.rete.bufferInfo);
@@ -317,7 +319,7 @@ function render(app) {
       u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
       u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
       u_diffuse: [0, 0, 0],
-      u_texture: textures.green,
+      u_texture: textures.blue,
     });
 
     twgl.drawBufferInfo(gl, objects.edte.bufferInfo);
