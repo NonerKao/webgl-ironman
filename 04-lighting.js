@@ -555,6 +555,12 @@ function startLoop(app, now = 0) {
   requestAnimationFrame(now => startLoop(app, now));
 }
 
+function X(puzzle){
+  var temp = puzzle[1];
+  puzzle[1] = puzzle[2];
+  puzzle[2] = temp;
+}
+
 async function main() {
   const app = await setup();
   window.app = app;
@@ -566,6 +572,10 @@ async function main() {
 
     app.state.explode1 = parseFloat(formData.get('explode1'));
     app.state.explode2 = parseFloat(formData.get('explode2'));
+  });
+  const XBut = document.getElementById('x-button');
+  XBut.addEventListener('click', event => {
+    X(app.puzzle);
   });
 
   document.addEventListener('keydown', event => {
