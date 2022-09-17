@@ -115,15 +115,23 @@ async function setup() {
   const objects = {};
 
   { // regular tetrahedron
+    var d = 0.0;
     const attribs = {
+	    /*
       position: new Float32Array([-1.5, -1.5, -1.5, -1.5, -0.5, -0.5, -0.5, -0.5, -1.5,
 	                          -1.5, -1.5, -1.5, -0.5, -0.5, -1.5, -0.5, -1.5, -0.5,
 	                          -1.5, -1.5, -1.5, -0.5, -1.5, -0.5, -1.5, -0.5, -0.5,
 	                          -1.5, -0.5, -0.5, -0.5, -1.5, -0.5, -0.5, -0.5, -1.5,]),
+				*/
       normal: new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1,
 	                        1, 1, -1, 1, 1, -1, 1, 1, -1,
 	                        -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	                        -1, -1, 1, -1, -1, 1, -1, -1, 1]),
+				
+      position: new Float32Array([0+d, 0+d, -1-d, 0+d, 1+d, 0-d, 1+d, 1+d, -1-d,
+	                          0+d, 0+d, -1-d, 1+d, 1+d, -1-d, 1+d, 0+d, 0-d,
+	                          0+d, 0+d, -1-d, 1+d, 0+d, 0-d, 0+d, 1+d, 0-d,
+	                          0+d, 1+d, 0-d, 1+d, 0+d, 0-d, 1+d, 1+d, -1-d,]),
       texcoord: new Float32Array([0, 0, 1, 0, 0, 1,
 	                          0, 0, 1, 0, 0, 1,
 	                          0, 0, 1, 0, 0, 1,
@@ -244,10 +252,10 @@ async function setup() {
     state: {
       fieldOfView: degToRad(45),
       lightDir: [0, -1, 0],
-      cameraPosition: [5, 3, 7],
+      cameraPosition: [15, 9, 21],
       cameraVelocity: [0, 0, 0],
       explode1: 0.5,
-      explode2: 1.5,
+      explode2: 4,
     },
     time: 0,
     puzzle: puzzle,
@@ -256,49 +264,133 @@ async function setup() {
 
 /***
 *
-*       *----*
-*      /|   /|
-*     *----* |
-*     | *--|-*
-*     |/   |/
-*     *----*
+*       *-8--*
+*  9<--/4   /7
+*     *-10-* |
+*     5 *--6-*  --> 0
+*     |1   |3
+*     *-2--*
 *
 */
-function renderEdgeTetrahedron(app, viewMatrix) {
+function renderEdgeTetrahedron(app, viewMatrix, cellID) {
   const {
     gl,
     programInfo,
     textures, objects,
     state,
+    puzzle,
   } = app;
-  for (var i = 0; i < 3; i++) { // edge tetrahedron 
+  for (var i = 0; i < 12; i++) { // edge tetrahedron 
     gl.bindVertexArray(objects.edte.vao);
 
     const worldMatrix = (i < 4) ? matrix4.multiply(
-      matrix4.yRotate(degToRad(90)),
-      matrix4.zRotate(degToRad(i*90)),
+      translateCell(state.explode2, cellID),
+      matrix4.yRotate(degToRad(i*90)),
+      matrix4.translate(0, -state.explode1, -state.explode1),
       matrix4.scale(1, 1, 1),
-      matrix4.translate(0, 0, 0),
     ) : (i < 8) ? matrix4.multiply(
-      matrix4.translate(0, 0, state.explode1),
-      matrix4.xRotate(degToRad((i-4)*90)),
+      translateCell(state.explode2, cellID),
+      matrix4.yRotate(degToRad((i-4)*90)),
+      matrix4.zRotate(degToRad(270)),
+      matrix4.translate(0, -state.explode1, -state.explode1),
       matrix4.scale(1, 1, 1),
     ) : matrix4.multiply(
-      matrix4.yRotate(degToRad(-90)),
-      matrix4.zRotate(degToRad((i-8)*90)),
+      translateCell(state.explode2, cellID),
+      matrix4.yRotate(degToRad((i-4)*90)),
+      matrix4.zRotate(degToRad(180)),
+      matrix4.translate(0, -state.explode1, -state.explode1),
       matrix4.scale(1, 1, 1),
-      matrix4.translate(0, 0, 0),
     );
 
     twgl.setUniforms(programInfo, {
       u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
       u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
       u_diffuse: [0, 0, 0],
-      u_texture: textures.blue,
+      u_texture: puzzle[cellID][i],
     });
 
     twgl.drawBufferInfo(gl, objects.edte.bufferInfo);
   }
+}
+
+function translateCell(explode, cellID) {
+  const oddity = (cellID % 2 == 1) ? 1 : -1;
+  const mat = (cellID == 6 /*W-*/) ? matrix4.translate(0, 0, 0)
+  	: (cellID < 2 /*X*/) ? matrix4.translate(oddity*explode, 0, 0)
+  	: (cellID < 4 /*Y*/) ? matrix4.translate(0, oddity*explode, 0)
+  	: matrix4.translate(0, 0, oddity*explode);
+  return mat;
+}
+
+function renderOctahedron(app, viewMatrix, cellID) {
+  const {
+    gl,
+    programInfo,
+    textures, objects,
+    state,
+    puzzle,
+  } = app;
+
+  { // octahedron 
+    gl.bindVertexArray(objects.octa.vao);
+
+    const worldMatrix = translateCell(state.explode2, cellID);
+
+    twgl.setUniforms(programInfo, {
+      u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
+      u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
+      u_diffuse: [0, 0, 0],
+      u_texture: puzzle[cellID][20],
+    });
+
+    twgl.drawBufferInfo(gl, objects.octa.bufferInfo);
+  }
+}
+
+/***
+*
+*       1----0 
+*      /|   /|
+*     2----3 |
+*     | 6--|-7        
+*     |/   |/
+*     5----4
+*
+*/
+function renderRegularTetrahedron(app, viewMatrix, cellID) {
+  const {
+    gl,
+    programInfo,
+    textures, objects,
+    state,
+    puzzle,
+  } = app;
+
+  for (var i = 0; i < 8; i++ ){ // regular tetrahedron 
+    gl.bindVertexArray(objects.rete.vao);
+
+    const worldMatrix = (i < 4) ? matrix4.multiply(
+      translateCell(state.explode2, cellID),
+      matrix4.yRotate(degToRad(i*90)),
+      matrix4.translate(state.explode1/2, state.explode1/2, -state.explode1/2),
+      matrix4.scale(1, 1, 1),
+    ) : matrix4.multiply(
+      translateCell(state.explode2, cellID),
+      matrix4.yRotate(degToRad((i-4)*90)),
+      matrix4.zRotate(degToRad(-90)),
+      matrix4.translate(state.explode1/2, state.explode1/2, -state.explode1/2),
+      matrix4.scale(1, 1, 1),
+    );
+
+    twgl.setUniforms(programInfo, {
+      u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
+      u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
+      u_diffuse: [0, 0, 0],
+      u_texture: puzzle[cellID][i+12],
+    });
+
+    twgl.drawBufferInfo(gl, objects.rete.bufferInfo);
+  };
 }
 
 function renderCell(app, viewMatrix) {
@@ -309,49 +401,11 @@ function renderCell(app, viewMatrix) {
     state,
   } = app;
 
-  { // octahedron 
-    gl.bindVertexArray(objects.octa.vao);
-
-    const worldMatrix = matrix4.multiply(
-      matrix4.translate(0, 0, 0),
-      matrix4.scale(1, 1, 1),
-    );
-
-    twgl.setUniforms(programInfo, {
-      u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
-      u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
-      u_diffuse: [0, 0, 0],
-      u_texture: textures.red,
-    });
-
-    twgl.drawBufferInfo(gl, objects.octa.bufferInfo);
+  for (var i = 0; i < 7; i++ ){ 
+    renderOctahedron(app, viewMatrix, i);
+    renderRegularTetrahedron(app, viewMatrix, i);
+    renderEdgeTetrahedron(app, viewMatrix, i);
   }
-
-  for (var i = 0; i < 8; i++ ){ // regular tetrahedron 
-    gl.bindVertexArray(objects.rete.vao);
-
-    const worldMatrix = (i < 4) ? matrix4.multiply(
-      matrix4.translate(0, 0, 0),
-      matrix4.yRotate(degToRad(i*90)),
-      matrix4.scale(1, 1, 1),
-    ) : matrix4.multiply(
-      matrix4.translate(0, 0, 0),
-      matrix4.zRotate(degToRad(-90)),
-      matrix4.xRotate(degToRad((i-4)*90)),
-      matrix4.scale(1, 1, 1),
-    );
-
-    twgl.setUniforms(programInfo, {
-      u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
-      u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
-      u_diffuse: [0, 0, 0],
-      u_texture: textures.yellow,
-    });
-
-    twgl.drawBufferInfo(gl, objects.rete.bufferInfo);
-  };
-
-  renderEdgeTetrahedron(app, viewMatrix);
 }
 
 function render(app) {
