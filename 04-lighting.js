@@ -136,11 +136,12 @@ async function setup() {
   }
 
   { // edge tetrahedron
+    var d = 0.01;
     const attribs = {
-      position: new Float32Array([-1, -2, -2, 0, -2, -1, 0, -1, -2,
-	                          0, -2, -1, 1, -2, -2, 0, -1, -2,
-	                          -1, -2, -2, 1, -2, -2, 0, -2, -1,
-	                          -1, -2, -2, 0, -1, -2, 1, -2, -2,]),
+      position: new Float32Array([-1, -1-d, -1-d, 0, -1-d, 0-d, 0, 0-d, -1-d,
+	                          0, -1-d, 0-d, 1, -1-d, -1-d, 0, 0-d, -1-d,
+	                          -1, -1-d, -1-d, 1, -1-d, -1-d, 0, -1-d, 0-d,
+	                          -1, -1-d, -1-d, 0, 0-d, -1-d, 1, -1-d, -1-d,]),
       normal: new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1,
 	                        1, 1, -1, 1, 1, -1, 1, 1, -1,
 	                        -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -223,35 +224,67 @@ async function setup() {
       lightDir: [0, -1, 0],
       cameraPosition: [5, 3, 7],
       cameraVelocity: [0, 0, 0],
+      explode1: 0.5,
+      explode2: 1.5,
     },
     time: 0,
   };
 }
 
-function render(app) {
+/***
+*
+*       *----*
+*      /|   /|
+*     *----* |
+*     | *--|-*
+*     |/   |/
+*     *----*
+*
+*/
+function renderEdgeTetrahedron(app, viewMatrix, cameraMatrix) {
   const {
     gl,
     programInfo,
     textures, objects,
     state,
   } = app;
+  for (var i = 0; i < 12; i++) { // edge tetrahedron 
+    gl.bindVertexArray(objects.edte.vao);
 
-  gl.canvas.width = gl.canvas.clientWidth;
-  gl.canvas.height = gl.canvas.clientHeight;
-  gl.viewport(0, 0, canvas.width, canvas.height);
+    const worldMatrix = (i < 4) ? matrix4.multiply(
+      matrix4.yRotate(degToRad(90)),
+      matrix4.zRotate(degToRad(i*90)),
+      matrix4.scale(1, 1, 1),
+      matrix4.translate(0, 0, 0),
+    ) : (i < 8) ? matrix4.multiply(
+      matrix4.translate(0, 0, state.explode1),
+      matrix4.xRotate(degToRad((i-4)*90)),
+      matrix4.scale(1, 1, 1),
+    ) : matrix4.multiply(
+      matrix4.yRotate(degToRad(-90)),
+      matrix4.zRotate(degToRad((i-8)*90)),
+      matrix4.scale(1, 1, 1),
+      matrix4.translate(0, 0, 0),
+    );
 
-  gl.useProgram(programInfo.program);
+    twgl.setUniforms(programInfo, {
+      u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
+      u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
+      u_diffuse: [0, 0, 0],
+      u_texture: textures.blue,
+    });
 
-  const cameraMatrix = matrix4.lookAt(state.cameraPosition, [0, 0, 0], [0, 1, 0]);
+    twgl.drawBufferInfo(gl, objects.edte.bufferInfo);
+  }
+}
 
-  const viewMatrix = matrix4.multiply(
-    matrix4.perspective(state.fieldOfView, gl.canvas.width / gl.canvas.height, 0.1, 2000),
-    matrix4.inverse(cameraMatrix),
-  );
-
-  twgl.setUniforms(programInfo, {
-    u_lightDir: state.lightDir,
-  });
+function renderCell(app, viewMatrix, cameraMatrix) {
+  const {
+    gl,
+    programInfo,
+    textures, objects,
+    state,
+  } = app;
 
   { // octahedron 
     gl.bindVertexArray(objects.octa.vao);
@@ -295,34 +328,36 @@ function render(app) {
     twgl.drawBufferInfo(gl, objects.rete.bufferInfo);
   };
 
-  for (var i = 0; i < 12; i++) { // edge tetrahedron 
-    gl.bindVertexArray(objects.edte.vao);
+  renderEdgeTetrahedron(app, viewMatrix, cameraMatrix);
+}
 
-    const worldMatrix = (i < 4) ? matrix4.multiply(
-      matrix4.translate(0, 0, 0),
-      matrix4.yRotate(degToRad(90)),
-      matrix4.zRotate(degToRad(i*90)),
-      matrix4.scale(1, 1, 1),
-    ) : (i < 8) ? matrix4.multiply(
-      matrix4.translate(0, 0, 0),
-      matrix4.xRotate(degToRad((i-4)*90)),
-      matrix4.scale(1, 1, 1),
-    ) : matrix4.multiply(
-      matrix4.translate(0, 0, 0),
-      matrix4.yRotate(degToRad(-90)),
-      matrix4.zRotate(degToRad((i-8)*90)),
-      matrix4.scale(1, 1, 1),
-    );
+function render(app) {
+  const {
+    gl,
+    programInfo,
+    textures, objects,
+    state,
+  } = app;
 
-    twgl.setUniforms(programInfo, {
-      u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
-      u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
-      u_diffuse: [0, 0, 0],
-      u_texture: textures.blue,
-    });
+  gl.canvas.width = gl.canvas.clientWidth;
+  gl.canvas.height = gl.canvas.clientHeight;
+  gl.viewport(0, 0, canvas.width, canvas.height);
 
-    twgl.drawBufferInfo(gl, objects.edte.bufferInfo);
-  }
+  gl.useProgram(programInfo.program);
+
+  const cameraMatrix = matrix4.lookAt(state.cameraPosition, [0, 0, 0], [0, 1, 0]);
+
+  const viewMatrix = matrix4.multiply(
+    matrix4.perspective(state.fieldOfView, gl.canvas.width / gl.canvas.height, 0.1, 2000),
+    matrix4.inverse(cameraMatrix),
+  );
+
+  twgl.setUniforms(programInfo, {
+    u_lightDir: state.lightDir,
+  });
+
+
+  renderCell(app, viewMatrix, cameraMatrix);
 
   // The effect of a cosmos box is funny
   { // ground
@@ -453,7 +488,8 @@ async function main() {
   controlsForm.addEventListener('input', () => {
     const formData = new FormData(controlsForm);
 
-    app.state.explode = parseFloat(formData.get('explode'));
+    app.state.explode1 = parseFloat(formData.get('explode1'));
+    app.state.explode2 = parseFloat(formData.get('explode2'));
   });
 
   document.addEventListener('keydown', event => {
