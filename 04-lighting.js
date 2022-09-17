@@ -345,12 +345,15 @@ function render(app) {
 }
 
 function startLoop(app, now = 0) {
-  const timeDiff = now - app.time;
+  const timeDiff = 10* (now - app.time);
   app.time = now;
 
-  app.state.cameraPosition[0] += app.state.cameraVelocity[0] * timeDiff;
+  var l = app.state.cameraPosition[2]*app.state.cameraPosition[2]+app.state.cameraPosition[0]*app.state.cameraPosition[0];
+  l = Math.sqrt(l)
+
+  app.state.cameraPosition[0] += (app.state.cameraVelocity[0] * (app.state.cameraPosition[2]) + app.state.cameraVelocity[2] * (-app.state.cameraPosition[0])) * timeDiff / l;
   app.state.cameraPosition[1] += app.state.cameraVelocity[1] * timeDiff;
-  app.state.cameraPosition[2] += app.state.cameraVelocity[2] * timeDiff;
+  app.state.cameraPosition[2] += (app.state.cameraVelocity[0] * (-app.state.cameraPosition[0]) + app.state.cameraVelocity[2] * (-app.state.cameraPosition[2])) * timeDiff / l;
 
   render(app, timeDiff);
   requestAnimationFrame(now => startLoop(app, now));
@@ -365,9 +368,7 @@ async function main() {
   controlsForm.addEventListener('input', () => {
     const formData = new FormData(controlsForm);
 
-    app.state.lightDir[0] = parseFloat(formData.get('light-dir-x'));
-    app.state.lightDir[1] = parseFloat(formData.get('light-dir-y'));
-    app.state.lightDir[2] = parseFloat(formData.get('light-dir-z'));
+    app.state.explode = parseFloat(formData.get('explode'));
   });
 
   document.addEventListener('keydown', event => {
@@ -375,19 +376,6 @@ async function main() {
   });
   document.addEventListener('keyup', event => {
     handleKeyUp(app, event);
-  });
-
-  app.gl.canvas.addEventListener('mousedown', event => {
-    handlePointerDown(app, event);
-  });
-  app.gl.canvas.addEventListener('mouseup', () => {
-    handlePointerUp(app);
-  });
-  app.gl.canvas.addEventListener('touchstart', event => {
-    handlePointerDown(app, event.touches[0]);
-  });
-  app.gl.canvas.addEventListener('touchend', () => {
-    handlePointerUp(app);
   });
 
   startLoop(app);
@@ -415,10 +403,10 @@ function handleKeyDown(app, event) {
       app.state.cameraVelocity[0] = CAMERA_MOVE_SPEED;
       break;
     case 'KeyW':
-      app.state.cameraVelocity[2] = -CAMERA_MOVE_SPEED;
+      app.state.cameraVelocity[2] = CAMERA_MOVE_SPEED;
       break;
     case 'KeyS':
-      app.state.cameraVelocity[2] = CAMERA_MOVE_SPEED;
+      app.state.cameraVelocity[2] = -CAMERA_MOVE_SPEED;
       break;
   }
 }
@@ -436,9 +424,7 @@ function handleKeyUp(app, event) {
       app.state.cameraVelocity[1] = 0;
       break;
     case 'KeyW':
-    case 'ArrowUp':
     case 'KeyS':
-    case 'ArrowDown':
       app.state.cameraVelocity[2] = 0;
       break;
   }
