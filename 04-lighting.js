@@ -61,8 +61,7 @@ async function setup() {
 
   const textures = Object.fromEntries(
     await Promise.all(Object.entries({
-      wood: 'https://i.imgur.com/SJdQ7Twh.jpg',
-      steel: 'https://i.imgur.com/vqKuF5Ih.jpg',
+      cosmos: 'http://0.0.0.0:8080/cosmos.jpg',
       red: 'http://0.0.0.0:8080/red.jpeg',
       blue: 'http://0.0.0.0:8080/blue.jpeg',
       yellow: 'http://0.0.0.0:8080/yellow.jpeg'
@@ -325,19 +324,105 @@ function render(app) {
     twgl.drawBufferInfo(gl, objects.edte.bufferInfo);
   }
 
+  // The effect of a cosmos box is funny
   { // ground
     gl.bindVertexArray(objects.ground.vao);
 
     const worldMatrix = matrix4.multiply(
-      matrix4.translate(0, -3, 0),
-      matrix4.scale(10, 1, 10),
+      matrix4.translate(-100, 0, 0),
+      matrix4.scale(0, 200, 200),
+      matrix4.zRotate(degToRad(270)),
     );
 
     twgl.setUniforms(programInfo, {
       u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
       u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
       u_diffuse: [0, 0, 0],
-      u_texture: textures.wood,
+      u_texture: textures.cosmos,
+    });
+
+    twgl.drawBufferInfo(gl, objects.ground.bufferInfo);
+  }{ // ground
+    gl.bindVertexArray(objects.ground.vao);
+
+    const worldMatrix = matrix4.multiply(
+      matrix4.translate(100, 0, 0),
+      matrix4.scale(0, 200, 200),
+      matrix4.zRotate(degToRad(90)),
+    );
+
+    twgl.setUniforms(programInfo, {
+      u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
+      u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
+      u_diffuse: [0, 0, 0],
+      u_texture: textures.cosmos,
+    });
+
+    twgl.drawBufferInfo(gl, objects.ground.bufferInfo);
+  }{ // ground
+    gl.bindVertexArray(objects.ground.vao);
+
+    const worldMatrix = matrix4.multiply(
+      matrix4.translate(0, 0, 100),
+      matrix4.scale(200, 200, 0),
+      matrix4.xRotate(degToRad(270)),
+    );
+
+    twgl.setUniforms(programInfo, {
+      u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
+      u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
+      u_diffuse: [0, 0, 0],
+      u_texture: textures.cosmos,
+    });
+
+    twgl.drawBufferInfo(gl, objects.ground.bufferInfo);
+  }{ // ground
+    gl.bindVertexArray(objects.ground.vao);
+
+    const worldMatrix = matrix4.multiply(
+      matrix4.translate(0, 0, -100),
+      matrix4.scale(200, 200, 0),
+      matrix4.xRotate(degToRad(90)),
+    );
+
+    twgl.setUniforms(programInfo, {
+      u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
+      u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
+      u_diffuse: [0, 0, 0],
+      u_texture: textures.cosmos,
+    });
+
+    twgl.drawBufferInfo(gl, objects.ground.bufferInfo);
+  }{ // ground
+    gl.bindVertexArray(objects.ground.vao);
+
+    const worldMatrix = matrix4.multiply(
+      matrix4.translate(0, 100, 0),
+      matrix4.scale(200, 1, 200),
+      matrix4.xRotate(degToRad(180)),
+    );
+
+    twgl.setUniforms(programInfo, {
+      u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
+      u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
+      u_diffuse: [0, 0, 0],
+      u_texture: textures.cosmos,
+    });
+
+    twgl.drawBufferInfo(gl, objects.ground.bufferInfo);
+  }{ // ground
+    gl.bindVertexArray(objects.ground.vao);
+
+    const worldMatrix = matrix4.multiply(
+      matrix4.translate(0, -100, 0),
+      matrix4.scale(200, 1, 200),
+    );
+
+    twgl.setUniforms(programInfo, {
+      u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
+      u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
+      u_diffuse: [0, 0, 0],
+      u_texture: textures.cosmos,
     });
 
     twgl.drawBufferInfo(gl, objects.ground.bufferInfo);
