@@ -63,8 +63,13 @@ async function setup() {
     await Promise.all(Object.entries({
       cosmos: 'http://0.0.0.0:8080/cosmos.jpg',
       red: 'http://0.0.0.0:8080/red.jpeg',
+      orange: 'http://0.0.0.0:8080/orange.jpeg',
       blue: 'http://0.0.0.0:8080/blue.jpeg',
-      yellow: 'http://0.0.0.0:8080/yellow.jpeg'
+      green: 'http://0.0.0.0:8080/green.jpeg',
+      yellow: 'http://0.0.0.0:8080/yellow.jpeg',
+      white: 'http://0.0.0.0:8080/white.jpeg',
+      pink: 'http://0.0.0.0:8080/pink.jpeg',
+      coffee: 'http://0.0.0.0:8080/coffee.jpeg',
     }).map(async ([name, url]) => {
       const image = await loadImage(url);
       const texture = gl.createTexture();
@@ -215,6 +220,23 @@ async function setup() {
   gl.enable(gl.CULL_FACE);
   gl.enable(gl.DEPTH_TEST);
 
+  var textureArray = new Array(8).fill(0);
+  textureArray[0] = textures.orange; // X-
+  textureArray[1] = textures.red;    // X+
+  textureArray[2] = textures.green;  // Y-
+  textureArray[3] = textures.blue;   // Y+
+  textureArray[4] = textures.yellow; // Z-
+  textureArray[5] = textures.white;  // Z+
+  textureArray[6] = textures.pink;   // W-
+  textureArray[7] = textures.coffee; // W+, invisible by default
+
+  var puzzle = new Array(8).fill(0).map(() => new Array(21).fill(0));
+  for (var i = 0; i < 8; i++) { 
+    for (var j = 0; j < 21; j++) { 
+      puzzle[i][j] = textureArray[i];
+    }
+  }
+
   return {
     gl,
     programInfo,
@@ -228,6 +250,7 @@ async function setup() {
       explode2: 1.5,
     },
     time: 0,
+    puzzle: puzzle,
   };
 }
 
@@ -241,14 +264,14 @@ async function setup() {
 *     *----*
 *
 */
-function renderEdgeTetrahedron(app, viewMatrix, cameraMatrix) {
+function renderEdgeTetrahedron(app, viewMatrix) {
   const {
     gl,
     programInfo,
     textures, objects,
     state,
   } = app;
-  for (var i = 0; i < 12; i++) { // edge tetrahedron 
+  for (var i = 0; i < 3; i++) { // edge tetrahedron 
     gl.bindVertexArray(objects.edte.vao);
 
     const worldMatrix = (i < 4) ? matrix4.multiply(
@@ -278,7 +301,7 @@ function renderEdgeTetrahedron(app, viewMatrix, cameraMatrix) {
   }
 }
 
-function renderCell(app, viewMatrix, cameraMatrix) {
+function renderCell(app, viewMatrix) {
   const {
     gl,
     programInfo,
@@ -328,7 +351,7 @@ function renderCell(app, viewMatrix, cameraMatrix) {
     twgl.drawBufferInfo(gl, objects.rete.bufferInfo);
   };
 
-  renderEdgeTetrahedron(app, viewMatrix, cameraMatrix);
+  renderEdgeTetrahedron(app, viewMatrix);
 }
 
 function render(app) {
@@ -356,8 +379,7 @@ function render(app) {
     u_lightDir: state.lightDir,
   });
 
-
-  renderCell(app, viewMatrix, cameraMatrix);
+  renderCell(app, viewMatrix);
 
   // The effect of a cosmos box is funny
   { // ground
