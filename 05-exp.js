@@ -61,15 +61,15 @@ async function setup() {
 
   const textures = Object.fromEntries(
     await Promise.all(Object.entries({
-      cosmos: 'http://0.0.0.0:8080/linen.jpg',
-      red: 'http://0.0.0.0:8080/red.jpeg',
-      orange: 'http://0.0.0.0:8080/orange.jpeg',
-      blue: 'http://0.0.0.0:8080/blue.jpeg',
-      green: 'http://0.0.0.0:8080/green.jpeg',
-      yellow: 'http://0.0.0.0:8080/yellow.jpeg',
-      white: 'http://0.0.0.0:8080/white.jpeg',
-      pink: 'http://0.0.0.0:8080/pink.jpeg',
-      coffee: 'http://0.0.0.0:8080/coffee.jpeg',
+      linen: 'http://0.0.0.0:8082/linen.jpg',
+      red: 'http://0.0.0.0:8082/red.jpeg',
+      orange: 'http://0.0.0.0:8082/orange.jpeg',
+      blue: 'http://0.0.0.0:8082/blue.jpeg',
+      green: 'http://0.0.0.0:8082/green.jpeg',
+      yellow: 'http://0.0.0.0:8082/yellow.jpeg',
+      white: 'http://0.0.0.0:8082/white.jpeg',
+      pink: 'http://0.0.0.0:8082/pink.jpeg',
+      coffee: 'http://0.0.0.0:8082/coffee.jpeg',
     }).map(async ([name, url]) => {
       const image = await loadImage(url);
       const texture = gl.createTexture();
@@ -113,22 +113,58 @@ async function setup() {
   }
 
   const objects = {};
+  { // octahedron
+    const attribs = {
+      position: new Float32Array([-1, 0, 0, 0, 0, -1, 0, -1, 0,
+	                          -1, 0, 0, 0, -1, 0, 0, 0, 1,
+	                          -1, 0, 0, 0, 0, 1, 0, 1, 0,
+	                          -1, 0, 0, 0, 1, 0, 0, 0, -1,
+	                          1, 0, 0, 0, -1, 0, 0, 0, -1,
+	                          1, 0, 0, 0, 0, 1, 0, -1, 0,
+	                          1, 0, 0, 0, 1, 0, 0, 0, 1,
+	                          1, 0, 0, 0, 0, -1, 0, 1, 0,]),
+      normal: new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1,
+	                        1, 1, -1, 1, 1, -1, 1, 1, -1,
+	                        1, -1, -1, 1, -1, -1, 1, -1, -1,
+	                        1, -1, 1, 1, -1, 1, 1, -1, 1,
+	                        -1, 1, 1, -1, 1, 1, -1, 1, 1,
+	                        -1, 1, -1, -1, 1, -1, -1, 1, -1,
+	                        -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	                        -1, -1, 1, -1, -1, 1, -1, -1, 1]),
+      texcoord: new Float32Array([0, 0, 0.2, 0, 0, 0.2,
+	                          0, 0, 0.2, 0, 0, 0.2,
+	                          0, 0, 0.2, 0, 0, 0.2,
+	                          0, 0, 0.2, 0, 0, 0.2,
+	                          0, 0, 0.2, 0, 0, 0.2,
+	                          0, 0, 0.2, 0, 0, 0.2,
+	                          0, 0, 0.2, 0, 0, 0.2,
+	                          0, 0, 0.2, 0, 0, 0.2]),
+    };
+	  
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, attribs);
+    const vao = twgl.createVAOFromBufferInfo(gl, programInfo, bufferInfo);
+
+    objects.octa = {
+      attribs,
+      bufferInfo,
+      vao,
+    };
+  }
 
   { // regular tetrahedron
-    var d = 0.0;
     const attribs = {
-      normal: new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1,
+      normal: new Float32Array([-1, -1, -1, -1, -1, -1, -1, -1, -1,
 	                        1, 1, -1, 1, 1, -1, 1, 1, -1,
 	                        -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	                        -1, -1, 1, -1, -1, 1, -1, -1, 1]),
-      position: new Float32Array([0+d, 0+d, -1-d, 0+d, 1+d, 0-d, 1+d, 1+d, -1-d,
-	                          0+d, 0+d, -1-d, 1+d, 1+d, -1-d, 1+d, 0+d, 0-d,
-	                          0+d, 0+d, -1-d, 1+d, 0+d, 0-d, 0+d, 1+d, 0-d,
-	                          0+d, 1+d, 0-d, 1+d, 0+d, 0-d, 1+d, 1+d, -1-d,]),
       position: new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, -1,
 	                          -1, -1, 1, 1, -1, 1, -1, 1, 1,
 	                          -1, -1, 1, -1, -1, -1, 1, -1, 1,
 	                          1, -1, 1, -1, -1, -1, -1, 1, 1,]),
+      position: new Float32Array([0, 2, 0, 0, 0, -2, 2, 0, 0,
+	                          0, 2, 0, 4/3, 4/3, -4/3, 0, 0, -2,
+	                          0, 2, 0, 2, 0, 0, 4/3, 4/3, -4/3,
+	                          4/3, 4/3, -4/3, 2, 0, 0, 0, 0, -2,]),
       texcoord: new Float32Array([0, 0, 1, 0, 0, 1,
 	                          0, 0, 1, 0, 0, 1,
 	                          0, 0, 1, 0, 0, 1,
@@ -145,7 +181,7 @@ async function setup() {
     };
   }
 
-  { // octahedron
+  { // resthedron
     const attribs = {
       position: new Float32Array([-1, -1, 1, -1, 1, -1, -1, -1, -1,
 	                          -1, -1, 1, -1, 1, 1, -1, 1, -1,
@@ -182,7 +218,7 @@ async function setup() {
     const bufferInfo = twgl.createBufferInfoFromArrays(gl, attribs);
     const vao = twgl.createVAOFromBufferInfo(gl, programInfo, bufferInfo);
 
-    objects.octa = {
+    objects.rest = {
       attribs,
       bufferInfo,
       vao,
@@ -248,6 +284,32 @@ function translateCell(explode, cellID) {
   return mat;
 }
 
+function renderOctahedron(app, viewMatrix) {
+  const {
+    gl,
+    programInfo,
+    textures, objects,
+    state,
+    puzzle,
+  } = app;
+
+  { 
+    gl.bindVertexArray(objects.octa.vao);
+
+    const worldMatrix = matrix4.scale(2, 2, 2);
+
+    twgl.setUniforms(programInfo, {
+      u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
+      u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
+      u_diffuse: [0, 0, 0],
+      u_texture: textures.white,
+    });
+
+    twgl.drawBufferInfo(gl, objects.octa.bufferInfo);
+  }
+}
+
+
 function renderRest(app, viewMatrix, cellID) {
   const {
     gl,
@@ -257,13 +319,12 @@ function renderRest(app, viewMatrix, cellID) {
     puzzle,
   } = app;
 
-  { // octahedron 
-    gl.bindVertexArray(objects.octa.vao);
+  { // resthedron 
+    gl.bindVertexArray(objects.rest.vao);
 
-    const worldMatrix = (cellID == 6) ? translateCell(state.explode2, cellID)
+    const worldMatrix = (cellID == 7) ? translateCell(state.explode2, cellID)
       : (cellID == 0) ? matrix4.multiply(
-        translateCell(state.explode2, cellID),
-        matrix4.yRotate(degToRad(90)),
+        matrix4.translate(-1-state.explode1/2, -1-state.explode1/2, 1+state.explode1/2),
         matrix4.scale(1, 1, 1),
       ) : (cellID == 1) ? matrix4.multiply(
         translateCell(state.explode2, cellID),
@@ -271,8 +332,8 @@ function renderRest(app, viewMatrix, cellID) {
         matrix4.yRotate(degToRad(180)),
         matrix4.scale(1, 1, 1),
       ) : (cellID == 5 /*shit, Z+ as Y-*/) ? matrix4.multiply(
-        translateCell(state.explode2, cellID),
-        matrix4.yRotate(degToRad(-90)),
+        matrix4.xRotate(degToRad(180)),
+        matrix4.translate(-1-state.explode1/2, -1-state.explode1/2, 1+state.explode1/2),
         matrix4.scale(1, 1, 1),
       ) : (cellID == 4 /*shit, Z- as Y+*/) ? matrix4.multiply(
         translateCell(state.explode2, cellID),
@@ -280,8 +341,8 @@ function renderRest(app, viewMatrix, cellID) {
         matrix4.yRotate(degToRad(180)),
         matrix4.scale(1, 1, 1),
       ) : (cellID == 2 /*shit, Y- as Z-*/) ? matrix4.multiply(
-        translateCell(state.explode2, cellID),
-        matrix4.zRotate(degToRad(-90)),
+        matrix4.yRotate(degToRad(180)),
+        matrix4.translate(-1-state.explode1/2, -1-state.explode1/2, 1+state.explode1/2),
         matrix4.scale(1, 1, 1),
       ) : (cellID == 3 /*shit, Y+ as Z+*/) ? matrix4.multiply(
         translateCell(state.explode2, cellID),
@@ -289,8 +350,8 @@ function renderRest(app, viewMatrix, cellID) {
         matrix4.yRotate(degToRad(180)),
         matrix4.scale(1, 1, 1),
       ) : matrix4.multiply(
-        translateCell(state.explode2, cellID),
-        matrix4.yRotate(degToRad(180)),
+        matrix4.zRotate(degToRad(180)),
+        matrix4.translate(-1-state.explode1/2, -1-state.explode1/2, 1+state.explode1/2),
         matrix4.scale(1, 1, 1),
       );
 
@@ -302,7 +363,7 @@ function renderRest(app, viewMatrix, cellID) {
       u_texture: puzzle[cellID][0],
     });
 
-    twgl.drawBufferInfo(gl, objects.octa.bufferInfo);
+    twgl.drawBufferInfo(gl, objects.rest.bufferInfo);
   }
 }
 
@@ -330,8 +391,7 @@ function renderTetrahedron(app, viewMatrix, cellID) {
       matrix4.translate(-state.explode1/2, -state.explode1/2, state.explode1/2),
       matrix4.scale(1, 1, 1),
     ) : (cellID == 1) ? matrix4.multiply(
-      translateCell(state.explode2, cellID),
-      matrix4.translate(-state.explode1/2, -state.explode1/2, state.explode1/2),
+      matrix4.translate(state.explode1/2, state.explode1/2, -state.explode1/2),
       matrix4.scale(1, 1, 1),
     ) : (cellID == 5) ? matrix4.multiply(
       translateCell(state.explode2, cellID),
@@ -340,8 +400,8 @@ function renderTetrahedron(app, viewMatrix, cellID) {
       matrix4.translate(-state.explode1/2, -state.explode1/2, state.explode1/2),
       matrix4.scale(1, 1, 1),
     ) : (cellID == 4) ? matrix4.multiply(
-      translateCell(state.explode2, cellID),
-      matrix4.translate(-state.explode1/2, -state.explode1/2, state.explode1/2),
+      matrix4.xRotate(degToRad(180)),
+      matrix4.translate(state.explode1/2, state.explode1/2, -state.explode1/2),
       matrix4.scale(1, 1, 1),
     ) : (cellID == 2) ? matrix4.multiply(
       translateCell(state.explode2, cellID),
@@ -349,13 +409,12 @@ function renderTetrahedron(app, viewMatrix, cellID) {
       matrix4.translate(-state.explode1/2, -state.explode1/2, state.explode1/2),
       matrix4.scale(1, 1, 1),
     ) : (cellID == 3) ? matrix4.multiply(
-      translateCell(state.explode2, cellID),
-      matrix4.translate(-state.explode1/2, -state.explode1/2, state.explode1/2),
+      matrix4.yRotate(degToRad(180)),
+      matrix4.translate(state.explode1/2, state.explode1/2, -state.explode1/2),
       matrix4.scale(1, 1, 1),
     ) : matrix4.multiply(
-      translateCell(state.explode2, cellID),
-      matrix4.xRotate(degToRad(-90)),
-      matrix4.translate(-state.explode1/2, -state.explode1/2, state.explode1/2),
+      matrix4.zRotate(degToRad(180)),
+      matrix4.translate(state.explode1/2, state.explode1/2, -state.explode1/2),
       matrix4.scale(1, 1, 1),
     );
 
@@ -377,11 +436,7 @@ function renderCell(app, viewMatrix) {
     state,
   } = app;
 
-	/*
-  for (var i = 0; i < 8; i++ ){ 
-    renderRest(app, viewMatrix, i);
-    renderTetrahedron(app, viewMatrix, i);
-  }*/
+    renderOctahedron(app, viewMatrix);
     renderRest(app, viewMatrix, 0);
     renderTetrahedron(app, viewMatrix, 1);
     renderRest(app, viewMatrix, 5);
@@ -419,7 +474,7 @@ function render(app) {
 
   renderCell(app, viewMatrix);
 
-  // The effect of a cosmos box is funny
+  // The effect of a linen box is funny
   { // ground
     gl.bindVertexArray(objects.ground.vao);
 
@@ -433,7 +488,7 @@ function render(app) {
       u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
       u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
       u_diffuse: [0, 0, 0],
-      u_texture: textures.cosmos,
+      u_texture: textures.linen,
     });
 
     twgl.drawBufferInfo(gl, objects.ground.bufferInfo);
@@ -450,7 +505,7 @@ function render(app) {
       u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
       u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
       u_diffuse: [0, 0, 0],
-      u_texture: textures.cosmos,
+      u_texture: textures.linen,
     });
 
     twgl.drawBufferInfo(gl, objects.ground.bufferInfo);
@@ -467,7 +522,7 @@ function render(app) {
       u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
       u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
       u_diffuse: [0, 0, 0],
-      u_texture: textures.cosmos,
+      u_texture: textures.linen,
     });
 
     twgl.drawBufferInfo(gl, objects.ground.bufferInfo);
@@ -484,7 +539,7 @@ function render(app) {
       u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
       u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
       u_diffuse: [0, 0, 0],
-      u_texture: textures.cosmos,
+      u_texture: textures.linen,
     });
 
     twgl.drawBufferInfo(gl, objects.ground.bufferInfo);
@@ -501,7 +556,7 @@ function render(app) {
       u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
       u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
       u_diffuse: [0, 0, 0],
-      u_texture: textures.cosmos,
+      u_texture: textures.linen,
     });
 
     twgl.drawBufferInfo(gl, objects.ground.bufferInfo);
@@ -517,7 +572,7 @@ function render(app) {
       u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
       u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
       u_diffuse: [0, 0, 0],
-      u_texture: textures.cosmos,
+      u_texture: textures.linen,
     });
 
     twgl.drawBufferInfo(gl, objects.ground.bufferInfo);
@@ -525,7 +580,7 @@ function render(app) {
 }
 
 function startLoop(app, now = 0) {
-  const timeDiff = 10* (now - app.time);
+  const timeDiff = (now - app.time);
   app.time = now;
 
   var l = app.state.cameraPosition[2]*app.state.cameraPosition[2]+app.state.cameraPosition[0]*app.state.cameraPosition[0];
