@@ -228,6 +228,26 @@ async function setup() {
   gl.enable(gl.CULL_FACE);
   gl.enable(gl.DEPTH_TEST);
 
+  var puzzle = reset(textures);
+
+  return {
+    gl,
+    programInfo,
+    textures, objects,
+    state: {
+      fieldOfView: degToRad(45),
+      lightDir: [0, -1, 0],
+      cameraPosition: [15, 9, 21],
+      cameraVelocity: [0, 0, 0],
+      explode1: 0.5,
+      explode2: 4,
+    },
+    time: 0,
+    puzzle: puzzle,
+  };
+}
+
+function reset(textures) {
   var textureArray = new Array(8).fill(0);
   textureArray[0] = textures.orange; // X-
   textureArray[1] = textures.red;    // X+
@@ -245,21 +265,28 @@ async function setup() {
     }
   }
 
-  return {
-    gl,
-    programInfo,
-    textures, objects,
-    state: {
-      fieldOfView: degToRad(45),
-      lightDir: [0, -1, 0],
-      cameraPosition: [15, 9, 21],
-      cameraVelocity: [0, 0, 0],
-      explode1: 0.5,
-      explode2: 4,
-    },
-    time: 0,
-    puzzle: puzzle,
-  };
+  return puzzle;
+}
+
+function scramble(textures) {
+  var textureArray = new Array(8).fill(0);
+  textureArray[0] = textures.orange; // X-
+  textureArray[1] = textures.red;    // X+
+  textureArray[2] = textures.green;  // Y-
+  textureArray[3] = textures.blue;   // Y+
+  textureArray[4] = textures.yellow; // Z-
+  textureArray[5] = textures.white;  // Z+
+  textureArray[6] = textures.pink;   // W-
+  textureArray[7] = textures.coffee; // W+, invisible by default
+
+  var puzzle = new Array(8).fill(0).map(() => new Array(21).fill(0));
+  for (var i = 0; i < 8; i++) { 
+    for (var j = 0; j < 21; j++) { 
+      puzzle[i][j] = textureArray[Math.floor(Math.random()*8)];
+    }
+  }
+
+  return puzzle;
 }
 
 /***
@@ -949,6 +976,15 @@ async function main() {
     Z(app.puzzle);
   });
   /* twist */
+  /* state */
+  const Scramble = document.getElementById('scramble');
+  Scramble.addEventListener('click', event => {
+    app.puzzle = scramble(app.textures);
+  });
+  const Reset = document.getElementById('reset');
+  Reset.addEventListener('click', event => {
+    app.puzzle = reset(app.textures);
+  });
 
   /* view control */
   document.addEventListener('keydown', event => {
