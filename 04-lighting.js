@@ -555,10 +555,370 @@ function startLoop(app, now = 0) {
   requestAnimationFrame(now => startLoop(app, now));
 }
 
+function Z(puzzle){
+  /* Z- --> W- --> Z+ --> W+ */
+  var temp = puzzle[3];
+  puzzle[3] = puzzle[6];
+  puzzle[6] = puzzle[2];
+  puzzle[2] = puzzle[7];
+  puzzle[7] = temp;
+
+  /* X+ */
+  /* edge */
+  temp = puzzle[2][0];
+  puzzle[2][0] = puzzle[2][7];
+  puzzle[2][7] = puzzle[2][8];
+  puzzle[2][8] = puzzle[2][4];
+  puzzle[2][4] = temp;
+  temp = puzzle[2][1];
+  puzzle[2][1] = puzzle[2][3];
+  puzzle[2][3] = puzzle[2][11];
+  puzzle[2][11] = puzzle[2][9];
+  puzzle[2][9] = temp;
+  temp = puzzle[2][2];
+  puzzle[2][2] = puzzle[2][6];
+  puzzle[2][6] = puzzle[2][10];
+  puzzle[2][10] = puzzle[2][5];
+  puzzle[2][5] = temp;
+  /* center */
+  temp = puzzle[2][12];
+  puzzle[2][12] = puzzle[2][13];
+  puzzle[2][13] = puzzle[2][18];
+  puzzle[2][18] = puzzle[2][19];
+  puzzle[2][19] = temp;
+  temp = puzzle[2][14];
+  puzzle[2][14] = puzzle[2][17];
+  puzzle[2][17] = puzzle[2][16];
+  puzzle[2][16] = puzzle[2][15];
+  puzzle[2][15] = temp;
+  /* X- */
+  /* edge */
+  temp = puzzle[3][0];
+  puzzle[3][0] = puzzle[3][4];
+  puzzle[3][4] = puzzle[3][8];
+  puzzle[3][8] = puzzle[3][7];
+  puzzle[3][7] = temp;
+  temp = puzzle[3][1];
+  puzzle[3][1] = puzzle[3][9];
+  puzzle[3][9] = puzzle[3][11];
+  puzzle[3][11] = puzzle[3][3];
+  puzzle[3][3] = temp;
+  temp = puzzle[3][2];
+  puzzle[3][2] = puzzle[3][5];
+  puzzle[3][5] = puzzle[3][10];
+  puzzle[3][10] = puzzle[3][6];
+  puzzle[3][6] = temp;
+  /* center */
+  temp = puzzle[3][12];
+  puzzle[3][12] = puzzle[3][19];
+  puzzle[3][19] = puzzle[3][18];
+  puzzle[3][18] = puzzle[3][13];
+  puzzle[3][13] = temp;
+  temp = puzzle[3][14];
+  puzzle[3][14] = puzzle[3][15];
+  puzzle[3][15] = puzzle[3][16];
+  puzzle[3][16] = puzzle[3][17];
+  puzzle[3][17] = temp;
+  /* Y- */
+  /* edge */
+  temp = puzzle[5][0];
+  puzzle[5][0] = puzzle[5][2];
+  puzzle[5][2] = puzzle[5][10];
+  puzzle[5][10] = puzzle[5][8];
+  puzzle[5][8] = temp;
+  temp = puzzle[5][1];
+  puzzle[5][1] = puzzle[5][5];
+  puzzle[5][5] = puzzle[5][9];
+  puzzle[5][9] = puzzle[5][4];
+  puzzle[5][4] = temp;
+  temp = puzzle[5][3];
+  puzzle[5][3] = puzzle[5][6];
+  puzzle[5][6] = puzzle[5][11];
+  puzzle[5][11] = puzzle[5][7];
+  puzzle[5][7] = temp;
+  /* center */
+  temp = puzzle[5][12];
+  puzzle[5][12] = puzzle[5][19];
+  puzzle[5][19] = puzzle[5][16];
+  puzzle[5][16] = puzzle[5][15];
+  puzzle[5][15] = temp;
+  temp = puzzle[5][13];
+  puzzle[5][13] = puzzle[5][18];
+  puzzle[5][18] = puzzle[5][17];
+  puzzle[5][17] = puzzle[5][14];
+  puzzle[5][14] = temp;
+  /* Y+ */
+  /* edge */
+  temp = puzzle[4][0];
+  puzzle[4][0] = puzzle[4][8];
+  puzzle[4][8] = puzzle[4][10];
+  puzzle[4][10] = puzzle[4][2];
+  puzzle[4][2] = temp;
+  temp = puzzle[4][1];
+  puzzle[4][1] = puzzle[4][4];
+  puzzle[4][4] = puzzle[4][9];
+  puzzle[4][9] = puzzle[4][5];
+  puzzle[4][5] = temp;
+  temp = puzzle[4][3];
+  puzzle[4][3] = puzzle[4][7];
+  puzzle[4][7] = puzzle[4][11];
+  puzzle[4][11] = puzzle[4][6];
+  puzzle[4][6] = temp;
+  /* center */
+  temp = puzzle[4][12];
+  puzzle[4][12] = puzzle[4][15];
+  puzzle[4][15] = puzzle[4][16];
+  puzzle[4][16] = puzzle[4][19];
+  puzzle[4][19] = temp;
+  temp = puzzle[4][13];
+  puzzle[4][13] = puzzle[4][14];
+  puzzle[4][14] = puzzle[4][17];
+  puzzle[4][17] = puzzle[4][18];
+  puzzle[4][18] = temp;
+}
+
+function Y(puzzle){
+  /* Y- --> W- --> Y+ --> W+ */
+  var temp = puzzle[4];
+  puzzle[4] = puzzle[6];
+  puzzle[6] = puzzle[5];
+  puzzle[5] = puzzle[7];
+  puzzle[7] = temp;
+
+  /* X+ */
+  /* edge */
+  temp = puzzle[1][0];
+  puzzle[1][0] = puzzle[1][1];
+  puzzle[1][1] = puzzle[1][2];
+  puzzle[1][2] = puzzle[1][3];
+  puzzle[1][3] = temp;
+  temp = puzzle[1][4];
+  puzzle[1][4] = puzzle[1][5];
+  puzzle[1][5] = puzzle[1][6];
+  puzzle[1][6] = puzzle[1][7];
+  puzzle[1][7] = temp;
+  temp = puzzle[1][8];
+  puzzle[1][8] = puzzle[1][9];
+  puzzle[1][9] = puzzle[1][10];
+  puzzle[1][10] = puzzle[1][11];
+  puzzle[1][11] = temp;
+  /* center */
+  temp = puzzle[1][12];
+  puzzle[1][12] = puzzle[1][13];
+  puzzle[1][13] = puzzle[1][14];
+  puzzle[1][14] = puzzle[1][15];
+  puzzle[1][15] = temp;
+  temp = puzzle[1][16];
+  puzzle[1][16] = puzzle[1][19];
+  puzzle[1][19] = puzzle[1][18];
+  puzzle[1][18] = puzzle[1][17];
+  puzzle[1][17] = temp;
+  /* X- */
+  /* edge */
+  temp = puzzle[0][0];
+  puzzle[0][0] = puzzle[0][3];
+  puzzle[0][3] = puzzle[0][2];
+  puzzle[0][2] = puzzle[0][1];
+  puzzle[0][1] = temp;
+  temp = puzzle[0][4];
+  puzzle[0][4] = puzzle[0][7];
+  puzzle[0][7] = puzzle[0][6];
+  puzzle[0][6] = puzzle[0][5];
+  puzzle[0][5] = temp;
+  temp = puzzle[0][8];
+  puzzle[0][8] = puzzle[0][11];
+  puzzle[0][11] = puzzle[0][10];
+  puzzle[0][10] = puzzle[0][9];
+  puzzle[0][9] = temp;
+  /* center */
+  temp = puzzle[0][12];
+  puzzle[0][12] = puzzle[0][15];
+  puzzle[0][15] = puzzle[0][14];
+  puzzle[0][14] = puzzle[0][13];
+  puzzle[0][13] = temp;
+  temp = puzzle[0][16];
+  puzzle[0][16] = puzzle[0][17];
+  puzzle[0][17] = puzzle[0][18];
+  puzzle[0][18] = puzzle[0][19];
+  puzzle[0][19] = temp;
+  /* Z+ */
+  /* edge */
+  temp = puzzle[3][0];
+  puzzle[3][0] = puzzle[3][2];
+  puzzle[3][2] = puzzle[3][10];
+  puzzle[3][10] = puzzle[3][8];
+  puzzle[3][8] = temp;
+  temp = puzzle[3][1];
+  puzzle[3][1] = puzzle[3][5];
+  puzzle[3][5] = puzzle[3][9];
+  puzzle[3][9] = puzzle[3][4];
+  puzzle[3][4] = temp;
+  temp = puzzle[3][3];
+  puzzle[3][3] = puzzle[3][6];
+  puzzle[3][6] = puzzle[3][11];
+  puzzle[3][11] = puzzle[3][7];
+  puzzle[3][7] = temp;
+  /* center */
+  temp = puzzle[3][12];
+  puzzle[3][12] = puzzle[3][19];
+  puzzle[3][19] = puzzle[3][16];
+  puzzle[3][16] = puzzle[3][15];
+  puzzle[3][15] = temp;
+  temp = puzzle[3][13];
+  puzzle[3][13] = puzzle[3][18];
+  puzzle[3][18] = puzzle[3][17];
+  puzzle[3][17] = puzzle[3][14];
+  puzzle[3][14] = temp;
+  /* Z- */
+  /* edge */
+  temp = puzzle[2][0];
+  puzzle[2][0] = puzzle[2][8];
+  puzzle[2][8] = puzzle[2][10];
+  puzzle[2][10] = puzzle[2][2];
+  puzzle[2][2] = temp;
+  temp = puzzle[2][1];
+  puzzle[2][1] = puzzle[2][4];
+  puzzle[2][4] = puzzle[2][9];
+  puzzle[2][9] = puzzle[2][5];
+  puzzle[2][5] = temp;
+  temp = puzzle[2][3];
+  puzzle[2][3] = puzzle[2][7];
+  puzzle[2][7] = puzzle[2][11];
+  puzzle[2][11] = puzzle[2][6];
+  puzzle[2][6] = temp;
+  /* center */
+  temp = puzzle[2][12];
+  puzzle[2][12] = puzzle[2][15];
+  puzzle[2][15] = puzzle[2][16];
+  puzzle[2][16] = puzzle[2][19];
+  puzzle[2][19] = temp;
+  temp = puzzle[2][13];
+  puzzle[2][13] = puzzle[2][14];
+  puzzle[2][14] = puzzle[2][17];
+  puzzle[2][17] = puzzle[2][18];
+  puzzle[2][18] = temp;
+}
+
 function X(puzzle){
+  /* X- --> W- --> X+ --> W+ */
   var temp = puzzle[1];
-  puzzle[1] = puzzle[2];
-  puzzle[2] = temp;
+  puzzle[1] = puzzle[6];
+  puzzle[6] = puzzle[0];
+  puzzle[0] = puzzle[7];
+  puzzle[7] = temp;
+
+  /* Y- */
+  /* edge */
+  temp = puzzle[5][0];
+  puzzle[5][0] = puzzle[5][1];
+  puzzle[5][1] = puzzle[5][2];
+  puzzle[5][2] = puzzle[5][3];
+  puzzle[5][3] = temp;
+  temp = puzzle[5][4];
+  puzzle[5][4] = puzzle[5][5];
+  puzzle[5][5] = puzzle[5][6];
+  puzzle[5][6] = puzzle[5][7];
+  puzzle[5][7] = temp;
+  temp = puzzle[5][8];
+  puzzle[5][8] = puzzle[5][9];
+  puzzle[5][9] = puzzle[5][10];
+  puzzle[5][10] = puzzle[5][11];
+  puzzle[5][11] = temp;
+  /* center */
+  temp = puzzle[5][12];
+  puzzle[5][12] = puzzle[5][13];
+  puzzle[5][13] = puzzle[5][14];
+  puzzle[5][14] = puzzle[5][15];
+  puzzle[5][15] = temp;
+  temp = puzzle[5][16];
+  puzzle[5][16] = puzzle[5][19];
+  puzzle[5][19] = puzzle[5][18];
+  puzzle[5][18] = puzzle[5][17];
+  puzzle[5][17] = temp;
+  /* Y+ */
+  /* edge */
+  temp = puzzle[4][0];
+  puzzle[4][0] = puzzle[4][3];
+  puzzle[4][3] = puzzle[4][2];
+  puzzle[4][2] = puzzle[4][1];
+  puzzle[4][1] = temp;
+  temp = puzzle[4][4];
+  puzzle[4][4] = puzzle[4][7];
+  puzzle[4][7] = puzzle[4][6];
+  puzzle[4][6] = puzzle[4][5];
+  puzzle[4][5] = temp;
+  temp = puzzle[4][8];
+  puzzle[4][8] = puzzle[4][11];
+  puzzle[4][11] = puzzle[4][10];
+  puzzle[4][10] = puzzle[4][9];
+  puzzle[4][9] = temp;
+  /* center */
+  temp = puzzle[4][12];
+  puzzle[4][12] = puzzle[4][15];
+  puzzle[4][15] = puzzle[4][14];
+  puzzle[4][14] = puzzle[4][13];
+  puzzle[4][13] = temp;
+  temp = puzzle[4][16];
+  puzzle[4][16] = puzzle[4][17];
+  puzzle[4][17] = puzzle[4][18];
+  puzzle[4][18] = puzzle[4][19];
+  puzzle[4][19] = temp;
+  /* Z+ */
+  /* edge */
+  temp = puzzle[3][0];
+  puzzle[3][0] = puzzle[3][4];
+  puzzle[3][4] = puzzle[3][8];
+  puzzle[3][8] = puzzle[3][7];
+  puzzle[3][7] = temp;
+  temp = puzzle[3][1];
+  puzzle[3][1] = puzzle[3][9];
+  puzzle[3][9] = puzzle[3][11];
+  puzzle[3][11] = puzzle[3][3];
+  puzzle[3][3] = temp;
+  temp = puzzle[3][2];
+  puzzle[3][2] = puzzle[3][5];
+  puzzle[3][5] = puzzle[3][10];
+  puzzle[3][10] = puzzle[3][6];
+  puzzle[3][6] = temp;
+  /* center */
+  temp = puzzle[3][12];
+  puzzle[3][12] = puzzle[3][19];
+  puzzle[3][19] = puzzle[3][18];
+  puzzle[3][18] = puzzle[3][13];
+  puzzle[3][13] = temp;
+  temp = puzzle[3][14];
+  puzzle[3][14] = puzzle[3][15];
+  puzzle[3][15] = puzzle[3][16];
+  puzzle[3][16] = puzzle[3][17];
+  puzzle[3][17] = temp;
+  /* Z- */
+  /* edge */
+  temp = puzzle[2][0];
+  puzzle[2][0] = puzzle[2][7];
+  puzzle[2][7] = puzzle[2][8];
+  puzzle[2][8] = puzzle[2][4];
+  puzzle[2][4] = temp;
+  temp = puzzle[2][1];
+  puzzle[2][1] = puzzle[2][3];
+  puzzle[2][3] = puzzle[2][11];
+  puzzle[2][11] = puzzle[2][9];
+  puzzle[2][9] = temp;
+  temp = puzzle[2][2];
+  puzzle[2][2] = puzzle[2][6];
+  puzzle[2][6] = puzzle[2][10];
+  puzzle[2][10] = puzzle[2][5];
+  puzzle[2][5] = temp;
+  /* center */
+  temp = puzzle[2][12];
+  puzzle[2][12] = puzzle[2][13];
+  puzzle[2][13] = puzzle[2][18];
+  puzzle[2][18] = puzzle[2][19];
+  puzzle[2][19] = temp;
+  temp = puzzle[2][14];
+  puzzle[2][14] = puzzle[2][17];
+  puzzle[2][17] = puzzle[2][16];
+  puzzle[2][16] = puzzle[2][15];
+  puzzle[2][15] = temp;
 }
 
 async function main() {
@@ -573,11 +933,24 @@ async function main() {
     app.state.explode1 = parseFloat(formData.get('explode1'));
     app.state.explode2 = parseFloat(formData.get('explode2'));
   });
-  const XBut = document.getElementById('x-button');
-  XBut.addEventListener('click', event => {
+
+  /* puzzle control */
+  /* pure rotation */
+  const XButton = document.getElementById('x-button');
+  XButton.addEventListener('click', event => {
     X(app.puzzle);
   });
+  const YButton = document.getElementById('y-button');
+  YButton.addEventListener('click', event => {
+    Y(app.puzzle);
+  });
+  const ZButton = document.getElementById('z-button');
+  ZButton.addEventListener('click', event => {
+    Z(app.puzzle);
+  });
+  /* twist */
 
+  /* view control */
   document.addEventListener('keydown', event => {
     handleKeyDown(app, event);
   });

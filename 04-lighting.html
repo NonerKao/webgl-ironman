@@ -23,6 +23,12 @@
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
   }
+
+  .btn-group button {
+  padding: 10px 24px; /* Some padding */
+  float: left; /* Float the buttons side by side */
+}
+
 </style>
 <body>
   <canvas id="canvas"></canvas>
@@ -42,10 +48,20 @@
       >
     </div>
     <div class="py-1">
-      <input
-        type="button" id="x-button" name="x-button"
-	value="X"
-      >
+      <div class="btn-group">
+        <input
+          type="button" id="x-button" name="x-button"
+	  value="X"
+        >
+        <input
+          type="button" id="y-button" name="y-button"
+	  value="Y"
+        >
+        <input
+          type="button" id="z-button" name="z-button"
+	  value="Z"
+        >
+      </div>
     </div>
   </form>
   <script type="module" src="04-lighting.js"></script>
