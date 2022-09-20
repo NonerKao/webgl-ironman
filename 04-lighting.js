@@ -271,6 +271,10 @@ function reset(textures) {
   return sticker;
 }
 
+function twist(puzzle, oct) {
+
+}
+
 function scramble(textures) {
   var textureArray = new Array(8).fill(0);
   textureArray[0] = textures.orange; // X-
@@ -710,10 +714,50 @@ function Z(puzzle){
 function Y(puzzle){
   /* Y- --> W- --> Y+ --> W+ */
   var temp = puzzle.sticker[4];
-  puzzle.sticker[4] = puzzle.sticker[6];
-  puzzle.sticker[6] = puzzle.sticker[5];
-  puzzle.sticker[5] = puzzle.sticker[7];
-  puzzle.sticker[7] = temp;
+  puzzle.sticker[4] = puzzle.sticker[6].slice();
+  puzzle.sticker[6] = puzzle.sticker[5].slice();
+  puzzle.sticker[5][0] = puzzle.sticker[7][10];
+  puzzle.sticker[5][1] = puzzle.sticker[7][9];
+  puzzle.sticker[5][2] = puzzle.sticker[7][8];
+  puzzle.sticker[5][3] = puzzle.sticker[7][11];
+  puzzle.sticker[5][4] = puzzle.sticker[7][5];
+  puzzle.sticker[5][5] = puzzle.sticker[7][4];
+  puzzle.sticker[5][6] = puzzle.sticker[7][7];
+  puzzle.sticker[5][7] = puzzle.sticker[7][6];
+  puzzle.sticker[5][8] = puzzle.sticker[7][2];
+  puzzle.sticker[5][9] = puzzle.sticker[7][1];
+  puzzle.sticker[5][10] = puzzle.sticker[7][0];
+  puzzle.sticker[5][11] = puzzle.sticker[7][3];
+  puzzle.sticker[5][12] = puzzle.sticker[7][16];
+  puzzle.sticker[5][13] = puzzle.sticker[7][17];
+  puzzle.sticker[5][14] = puzzle.sticker[7][18];
+  puzzle.sticker[5][15] = puzzle.sticker[7][19];
+  puzzle.sticker[5][16] = puzzle.sticker[7][12];
+  puzzle.sticker[5][17] = puzzle.sticker[7][13];
+  puzzle.sticker[5][18] = puzzle.sticker[7][14];
+  puzzle.sticker[5][19] = puzzle.sticker[7][15];
+  puzzle.sticker[5][20] = puzzle.sticker[7][20];
+  puzzle.sticker[7][0] = temp[10];
+  puzzle.sticker[7][1] = temp[9];
+  puzzle.sticker[7][2] = temp[8];
+  puzzle.sticker[7][3] = temp[11];
+  puzzle.sticker[7][4] = temp[5];
+  puzzle.sticker[7][5] = temp[4];
+  puzzle.sticker[7][6] = temp[7];
+  puzzle.sticker[7][7] = temp[6];
+  puzzle.sticker[7][8] = temp[2];
+  puzzle.sticker[7][9] = temp[1];
+  puzzle.sticker[7][10] = temp[0];
+  puzzle.sticker[7][11] = temp[3];
+  puzzle.sticker[7][12] = temp[16];
+  puzzle.sticker[7][13] = temp[17];
+  puzzle.sticker[7][14] = temp[18];
+  puzzle.sticker[7][15] = temp[19];
+  puzzle.sticker[7][16] = temp[12];
+  puzzle.sticker[7][17] = temp[13];
+  puzzle.sticker[7][18] = temp[14];
+  puzzle.sticker[7][19] = temp[15];
+  puzzle.sticker[7][20] = temp[20];
 
   /* X+ */
   /* edge */
@@ -832,10 +876,50 @@ function Y(puzzle){
 function X(puzzle){
   /* X- --> W- --> X+ --> W+ */
   var temp = puzzle.sticker[1];
-  puzzle.sticker[1] = puzzle.sticker[6];
-  puzzle.sticker[6] = puzzle.sticker[0];
-  puzzle.sticker[0] = puzzle.sticker[7];
-  puzzle.sticker[7] = temp;
+  puzzle.sticker[1] = puzzle.sticker[6].slice();
+  puzzle.sticker[6] = puzzle.sticker[0].slice();
+  puzzle.sticker[0][0] = puzzle.sticker[7][8];
+  puzzle.sticker[0][1] = puzzle.sticker[7][11];
+  puzzle.sticker[0][2] = puzzle.sticker[7][10];
+  puzzle.sticker[0][3] = puzzle.sticker[7][9];
+  puzzle.sticker[0][4] = puzzle.sticker[7][7];
+  puzzle.sticker[0][5] = puzzle.sticker[7][6];
+  puzzle.sticker[0][6] = puzzle.sticker[7][5];
+  puzzle.sticker[0][7] = puzzle.sticker[7][4];
+  puzzle.sticker[0][8] = puzzle.sticker[7][0];
+  puzzle.sticker[0][9] = puzzle.sticker[7][3];
+  puzzle.sticker[0][10] = puzzle.sticker[7][2];
+  puzzle.sticker[0][11] = puzzle.sticker[7][1];
+  puzzle.sticker[0][12] = puzzle.sticker[7][18];
+  puzzle.sticker[0][13] = puzzle.sticker[7][19];
+  puzzle.sticker[0][14] = puzzle.sticker[7][16];
+  puzzle.sticker[0][15] = puzzle.sticker[7][17];
+  puzzle.sticker[0][16] = puzzle.sticker[7][14];
+  puzzle.sticker[0][17] = puzzle.sticker[7][15];
+  puzzle.sticker[0][18] = puzzle.sticker[7][12];
+  puzzle.sticker[0][19] = puzzle.sticker[7][13];
+  puzzle.sticker[0][20] = puzzle.sticker[7][20];
+  puzzle.sticker[7][0] = temp[8];
+  puzzle.sticker[7][1] = temp[11];
+  puzzle.sticker[7][2] = temp[10];
+  puzzle.sticker[7][3] = temp[9];
+  puzzle.sticker[7][4] = temp[7];
+  puzzle.sticker[7][5] = temp[6];
+  puzzle.sticker[7][6] = temp[5];
+  puzzle.sticker[7][7] = temp[4];
+  puzzle.sticker[7][8] = temp[0];
+  puzzle.sticker[7][9] = temp[3];
+  puzzle.sticker[7][10] = temp[2];
+  puzzle.sticker[7][11] = temp[1];
+  puzzle.sticker[7][12] = temp[18];
+  puzzle.sticker[7][13] = temp[19];
+  puzzle.sticker[7][14] = temp[16];
+  puzzle.sticker[7][15] = temp[17];
+  puzzle.sticker[7][16] = temp[14];
+  puzzle.sticker[7][17] = temp[15];
+  puzzle.sticker[7][18] = temp[12];
+  puzzle.sticker[7][19] = temp[13];
+  puzzle.sticker[7][20] = temp[20];
 
   /* Y- */
   /* edge */
@@ -982,6 +1066,11 @@ async function main() {
     app.puzzle.history.push("Z");
   });
   /* twist */
+  const O0 = document.getElementById('0');
+  O0.addEventListener('click', event => {
+    twist(app.puzzle, 0);
+    app.puzzle.history.push("0");
+  });
   /* state */
   const Scramble = document.getElementById('scramble');
   Scramble.addEventListener('click', event => {
