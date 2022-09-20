@@ -228,7 +228,10 @@ async function setup() {
   gl.enable(gl.CULL_FACE);
   gl.enable(gl.DEPTH_TEST);
 
-  var puzzle = reset(textures);
+  var puzzle = {
+    sticker:  reset(textures),
+    history: [],
+  }
 
   return {
     gl,
@@ -240,7 +243,7 @@ async function setup() {
       cameraPosition: [15, 9, 21],
       cameraVelocity: [0, 0, 0],
       explode1: 0.5,
-      explode2: 4,
+      explode2: 6,
     },
     time: 0,
     puzzle: puzzle,
@@ -258,14 +261,14 @@ function reset(textures) {
   textureArray[6] = textures.pink;   // W-
   textureArray[7] = textures.coffee; // W+, invisible by default
 
-  var puzzle = new Array(8).fill(0).map(() => new Array(21).fill(0));
+  var sticker = new Array(8).fill(0).map(() => new Array(21).fill(0));
   for (var i = 0; i < 8; i++) { 
     for (var j = 0; j < 21; j++) { 
-      puzzle[i][j] = textureArray[i];
+      sticker[i][j] = textureArray[i];
     }
   }
 
-  return puzzle;
+  return sticker;
 }
 
 function scramble(textures) {
@@ -279,14 +282,14 @@ function scramble(textures) {
   textureArray[6] = textures.pink;   // W-
   textureArray[7] = textures.coffee; // W+, invisible by default
 
-  var puzzle = new Array(8).fill(0).map(() => new Array(21).fill(0));
+  var sticker = new Array(8).fill(0).map(() => new Array(21).fill(0));
   for (var i = 0; i < 8; i++) { 
     for (var j = 0; j < 21; j++) { 
-      puzzle[i][j] = textureArray[Math.floor(Math.random()*8)];
+      sticker[i][j] = textureArray[Math.floor(Math.random()*8)];
     }
   }
 
-  return puzzle;
+  return sticker;
 }
 
 /***
@@ -333,7 +336,7 @@ function renderEdgeTetrahedron(app, viewMatrix, cellID) {
       u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
       u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
       u_diffuse: [0, 0, 0],
-      u_texture: puzzle[cellID][i],
+      u_texture: puzzle.sticker[cellID][i],
     });
 
     twgl.drawBufferInfo(gl, objects.edte.bufferInfo);
@@ -367,7 +370,7 @@ function renderOctahedron(app, viewMatrix, cellID) {
       u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
       u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
       u_diffuse: [0, 0, 0],
-      u_texture: puzzle[cellID][20],
+      u_texture: puzzle.sticker[cellID][20],
     });
 
     twgl.drawBufferInfo(gl, objects.octa.bufferInfo);
@@ -413,7 +416,7 @@ function renderRegularTetrahedron(app, viewMatrix, cellID) {
       u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
       u_normalMatrix: matrix4.transpose(matrix4.inverse(worldMatrix)),
       u_diffuse: [0, 0, 0],
-      u_texture: puzzle[cellID][i+12],
+      u_texture: puzzle.sticker[cellID][i+12],
     });
 
     twgl.drawBufferInfo(gl, objects.rete.bufferInfo);
@@ -584,368 +587,368 @@ function startLoop(app, now = 0) {
 
 function Z(puzzle){
   /* Z- --> W- --> Z+ --> W+ */
-  var temp = puzzle[3];
-  puzzle[3] = puzzle[6];
-  puzzle[6] = puzzle[2];
-  puzzle[2] = puzzle[7];
-  puzzle[7] = temp;
+  var temp = puzzle.sticker[3];
+  puzzle.sticker[3] = puzzle.sticker[6];
+  puzzle.sticker[6] = puzzle.sticker[2];
+  puzzle.sticker[2] = puzzle.sticker[7];
+  puzzle.sticker[7] = temp;
 
   /* X+ */
   /* edge */
-  temp = puzzle[1][0];
-  puzzle[1][0] = puzzle[1][7];
-  puzzle[1][7] = puzzle[1][8];
-  puzzle[1][8] = puzzle[1][4];
-  puzzle[1][4] = temp;
-  temp = puzzle[1][1];
-  puzzle[1][1] = puzzle[1][3];
-  puzzle[1][3] = puzzle[1][11];
-  puzzle[1][11] = puzzle[1][9];
-  puzzle[1][9] = temp;
-  temp = puzzle[1][2];
-  puzzle[1][2] = puzzle[1][6];
-  puzzle[1][6] = puzzle[1][10];
-  puzzle[1][10] = puzzle[1][5];
-  puzzle[1][5] = temp;
+  temp = puzzle.sticker[1][0];
+  puzzle.sticker[1][0] = puzzle.sticker[1][7];
+  puzzle.sticker[1][7] = puzzle.sticker[1][8];
+  puzzle.sticker[1][8] = puzzle.sticker[1][4];
+  puzzle.sticker[1][4] = temp;
+  temp = puzzle.sticker[1][1];
+  puzzle.sticker[1][1] = puzzle.sticker[1][3];
+  puzzle.sticker[1][3] = puzzle.sticker[1][11];
+  puzzle.sticker[1][11] = puzzle.sticker[1][9];
+  puzzle.sticker[1][9] = temp;
+  temp = puzzle.sticker[1][2];
+  puzzle.sticker[1][2] = puzzle.sticker[1][6];
+  puzzle.sticker[1][6] = puzzle.sticker[1][10];
+  puzzle.sticker[1][10] = puzzle.sticker[1][5];
+  puzzle.sticker[1][5] = temp;
   /* center */
-  temp = puzzle[1][12];
-  puzzle[1][12] = puzzle[1][13];
-  puzzle[1][13] = puzzle[1][18];
-  puzzle[1][18] = puzzle[1][19];
-  puzzle[1][19] = temp;
-  temp = puzzle[1][14];
-  puzzle[1][14] = puzzle[1][17];
-  puzzle[1][17] = puzzle[1][16];
-  puzzle[1][16] = puzzle[1][15];
-  puzzle[1][15] = temp;
+  temp = puzzle.sticker[1][12];
+  puzzle.sticker[1][12] = puzzle.sticker[1][13];
+  puzzle.sticker[1][13] = puzzle.sticker[1][18];
+  puzzle.sticker[1][18] = puzzle.sticker[1][19];
+  puzzle.sticker[1][19] = temp;
+  temp = puzzle.sticker[1][14];
+  puzzle.sticker[1][14] = puzzle.sticker[1][17];
+  puzzle.sticker[1][17] = puzzle.sticker[1][16];
+  puzzle.sticker[1][16] = puzzle.sticker[1][15];
+  puzzle.sticker[1][15] = temp;
   /* X- */
   /* edge */
-  temp = puzzle[0][0];
-  puzzle[0][0] = puzzle[0][4];
-  puzzle[0][4] = puzzle[0][8];
-  puzzle[0][8] = puzzle[0][7];
-  puzzle[0][7] = temp;
-  temp = puzzle[0][1];
-  puzzle[0][1] = puzzle[0][9];
-  puzzle[0][9] = puzzle[0][11];
-  puzzle[0][11] = puzzle[0][3];
-  puzzle[0][3] = temp;
-  temp = puzzle[0][2];
-  puzzle[0][2] = puzzle[0][5];
-  puzzle[0][5] = puzzle[0][10];
-  puzzle[0][10] = puzzle[0][6];
-  puzzle[0][6] = temp;
+  temp = puzzle.sticker[0][0];
+  puzzle.sticker[0][0] = puzzle.sticker[0][4];
+  puzzle.sticker[0][4] = puzzle.sticker[0][8];
+  puzzle.sticker[0][8] = puzzle.sticker[0][7];
+  puzzle.sticker[0][7] = temp;
+  temp = puzzle.sticker[0][1];
+  puzzle.sticker[0][1] = puzzle.sticker[0][9];
+  puzzle.sticker[0][9] = puzzle.sticker[0][11];
+  puzzle.sticker[0][11] = puzzle.sticker[0][3];
+  puzzle.sticker[0][3] = temp;
+  temp = puzzle.sticker[0][2];
+  puzzle.sticker[0][2] = puzzle.sticker[0][5];
+  puzzle.sticker[0][5] = puzzle.sticker[0][10];
+  puzzle.sticker[0][10] = puzzle.sticker[0][6];
+  puzzle.sticker[0][6] = temp;
   /* center */
-  temp = puzzle[0][12];
-  puzzle[0][12] = puzzle[0][19];
-  puzzle[0][19] = puzzle[0][18];
-  puzzle[0][18] = puzzle[0][13];
-  puzzle[0][13] = temp;
-  temp = puzzle[0][14];
-  puzzle[0][14] = puzzle[0][15];
-  puzzle[0][15] = puzzle[0][16];
-  puzzle[0][16] = puzzle[0][17];
-  puzzle[0][17] = temp;
+  temp = puzzle.sticker[0][12];
+  puzzle.sticker[0][12] = puzzle.sticker[0][19];
+  puzzle.sticker[0][19] = puzzle.sticker[0][18];
+  puzzle.sticker[0][18] = puzzle.sticker[0][13];
+  puzzle.sticker[0][13] = temp;
+  temp = puzzle.sticker[0][14];
+  puzzle.sticker[0][14] = puzzle.sticker[0][15];
+  puzzle.sticker[0][15] = puzzle.sticker[0][16];
+  puzzle.sticker[0][16] = puzzle.sticker[0][17];
+  puzzle.sticker[0][17] = temp;
   /* Y- */
   /* edge */
-  temp = puzzle[5][0];
-  puzzle[5][0] = puzzle[5][2];
-  puzzle[5][2] = puzzle[5][10];
-  puzzle[5][10] = puzzle[5][8];
-  puzzle[5][8] = temp;
-  temp = puzzle[5][1];
-  puzzle[5][1] = puzzle[5][5];
-  puzzle[5][5] = puzzle[5][9];
-  puzzle[5][9] = puzzle[5][4];
-  puzzle[5][4] = temp;
-  temp = puzzle[5][3];
-  puzzle[5][3] = puzzle[5][6];
-  puzzle[5][6] = puzzle[5][11];
-  puzzle[5][11] = puzzle[5][7];
-  puzzle[5][7] = temp;
+  temp = puzzle.sticker[5][0];
+  puzzle.sticker[5][0] = puzzle.sticker[5][2];
+  puzzle.sticker[5][2] = puzzle.sticker[5][10];
+  puzzle.sticker[5][10] = puzzle.sticker[5][8];
+  puzzle.sticker[5][8] = temp;
+  temp = puzzle.sticker[5][1];
+  puzzle.sticker[5][1] = puzzle.sticker[5][5];
+  puzzle.sticker[5][5] = puzzle.sticker[5][9];
+  puzzle.sticker[5][9] = puzzle.sticker[5][4];
+  puzzle.sticker[5][4] = temp;
+  temp = puzzle.sticker[5][3];
+  puzzle.sticker[5][3] = puzzle.sticker[5][6];
+  puzzle.sticker[5][6] = puzzle.sticker[5][11];
+  puzzle.sticker[5][11] = puzzle.sticker[5][7];
+  puzzle.sticker[5][7] = temp;
   /* center */
-  temp = puzzle[5][12];
-  puzzle[5][12] = puzzle[5][19];
-  puzzle[5][19] = puzzle[5][16];
-  puzzle[5][16] = puzzle[5][15];
-  puzzle[5][15] = temp;
-  temp = puzzle[5][13];
-  puzzle[5][13] = puzzle[5][18];
-  puzzle[5][18] = puzzle[5][17];
-  puzzle[5][17] = puzzle[5][14];
-  puzzle[5][14] = temp;
+  temp = puzzle.sticker[5][12];
+  puzzle.sticker[5][12] = puzzle.sticker[5][19];
+  puzzle.sticker[5][19] = puzzle.sticker[5][16];
+  puzzle.sticker[5][16] = puzzle.sticker[5][15];
+  puzzle.sticker[5][15] = temp;
+  temp = puzzle.sticker[5][13];
+  puzzle.sticker[5][13] = puzzle.sticker[5][18];
+  puzzle.sticker[5][18] = puzzle.sticker[5][17];
+  puzzle.sticker[5][17] = puzzle.sticker[5][14];
+  puzzle.sticker[5][14] = temp;
   /* Y+ */
   /* edge */
-  temp = puzzle[4][0];
-  puzzle[4][0] = puzzle[4][8];
-  puzzle[4][8] = puzzle[4][10];
-  puzzle[4][10] = puzzle[4][2];
-  puzzle[4][2] = temp;
-  temp = puzzle[4][1];
-  puzzle[4][1] = puzzle[4][4];
-  puzzle[4][4] = puzzle[4][9];
-  puzzle[4][9] = puzzle[4][5];
-  puzzle[4][5] = temp;
-  temp = puzzle[4][3];
-  puzzle[4][3] = puzzle[4][7];
-  puzzle[4][7] = puzzle[4][11];
-  puzzle[4][11] = puzzle[4][6];
-  puzzle[4][6] = temp;
+  temp = puzzle.sticker[4][0];
+  puzzle.sticker[4][0] = puzzle.sticker[4][8];
+  puzzle.sticker[4][8] = puzzle.sticker[4][10];
+  puzzle.sticker[4][10] = puzzle.sticker[4][2];
+  puzzle.sticker[4][2] = temp;
+  temp = puzzle.sticker[4][1];
+  puzzle.sticker[4][1] = puzzle.sticker[4][4];
+  puzzle.sticker[4][4] = puzzle.sticker[4][9];
+  puzzle.sticker[4][9] = puzzle.sticker[4][5];
+  puzzle.sticker[4][5] = temp;
+  temp = puzzle.sticker[4][3];
+  puzzle.sticker[4][3] = puzzle.sticker[4][7];
+  puzzle.sticker[4][7] = puzzle.sticker[4][11];
+  puzzle.sticker[4][11] = puzzle.sticker[4][6];
+  puzzle.sticker[4][6] = temp;
   /* center */
-  temp = puzzle[4][12];
-  puzzle[4][12] = puzzle[4][15];
-  puzzle[4][15] = puzzle[4][16];
-  puzzle[4][16] = puzzle[4][19];
-  puzzle[4][19] = temp;
-  temp = puzzle[4][13];
-  puzzle[4][13] = puzzle[4][14];
-  puzzle[4][14] = puzzle[4][17];
-  puzzle[4][17] = puzzle[4][18];
-  puzzle[4][18] = temp;
+  temp = puzzle.sticker[4][12];
+  puzzle.sticker[4][12] = puzzle.sticker[4][15];
+  puzzle.sticker[4][15] = puzzle.sticker[4][16];
+  puzzle.sticker[4][16] = puzzle.sticker[4][19];
+  puzzle.sticker[4][19] = temp;
+  temp = puzzle.sticker[4][13];
+  puzzle.sticker[4][13] = puzzle.sticker[4][14];
+  puzzle.sticker[4][14] = puzzle.sticker[4][17];
+  puzzle.sticker[4][17] = puzzle.sticker[4][18];
+  puzzle.sticker[4][18] = temp;
 }
 
 function Y(puzzle){
   /* Y- --> W- --> Y+ --> W+ */
-  var temp = puzzle[4];
-  puzzle[4] = puzzle[6];
-  puzzle[6] = puzzle[5];
-  puzzle[5] = puzzle[7];
-  puzzle[7] = temp;
+  var temp = puzzle.sticker[4];
+  puzzle.sticker[4] = puzzle.sticker[6];
+  puzzle.sticker[6] = puzzle.sticker[5];
+  puzzle.sticker[5] = puzzle.sticker[7];
+  puzzle.sticker[7] = temp;
 
   /* X+ */
   /* edge */
-  temp = puzzle[1][0];
-  puzzle[1][0] = puzzle[1][1];
-  puzzle[1][1] = puzzle[1][2];
-  puzzle[1][2] = puzzle[1][3];
-  puzzle[1][3] = temp;
-  temp = puzzle[1][4];
-  puzzle[1][4] = puzzle[1][5];
-  puzzle[1][5] = puzzle[1][6];
-  puzzle[1][6] = puzzle[1][7];
-  puzzle[1][7] = temp;
-  temp = puzzle[1][8];
-  puzzle[1][8] = puzzle[1][9];
-  puzzle[1][9] = puzzle[1][10];
-  puzzle[1][10] = puzzle[1][11];
-  puzzle[1][11] = temp;
+  temp = puzzle.sticker[1][0];
+  puzzle.sticker[1][0] = puzzle.sticker[1][1];
+  puzzle.sticker[1][1] = puzzle.sticker[1][2];
+  puzzle.sticker[1][2] = puzzle.sticker[1][3];
+  puzzle.sticker[1][3] = temp;
+  temp = puzzle.sticker[1][4];
+  puzzle.sticker[1][4] = puzzle.sticker[1][5];
+  puzzle.sticker[1][5] = puzzle.sticker[1][6];
+  puzzle.sticker[1][6] = puzzle.sticker[1][7];
+  puzzle.sticker[1][7] = temp;
+  temp = puzzle.sticker[1][8];
+  puzzle.sticker[1][8] = puzzle.sticker[1][9];
+  puzzle.sticker[1][9] = puzzle.sticker[1][10];
+  puzzle.sticker[1][10] = puzzle.sticker[1][11];
+  puzzle.sticker[1][11] = temp;
   /* center */
-  temp = puzzle[1][12];
-  puzzle[1][12] = puzzle[1][13];
-  puzzle[1][13] = puzzle[1][14];
-  puzzle[1][14] = puzzle[1][15];
-  puzzle[1][15] = temp;
-  temp = puzzle[1][16];
-  puzzle[1][16] = puzzle[1][19];
-  puzzle[1][19] = puzzle[1][18];
-  puzzle[1][18] = puzzle[1][17];
-  puzzle[1][17] = temp;
+  temp = puzzle.sticker[1][12];
+  puzzle.sticker[1][12] = puzzle.sticker[1][13];
+  puzzle.sticker[1][13] = puzzle.sticker[1][14];
+  puzzle.sticker[1][14] = puzzle.sticker[1][15];
+  puzzle.sticker[1][15] = temp;
+  temp = puzzle.sticker[1][16];
+  puzzle.sticker[1][16] = puzzle.sticker[1][19];
+  puzzle.sticker[1][19] = puzzle.sticker[1][18];
+  puzzle.sticker[1][18] = puzzle.sticker[1][17];
+  puzzle.sticker[1][17] = temp;
   /* X- */
   /* edge */
-  temp = puzzle[0][0];
-  puzzle[0][0] = puzzle[0][3];
-  puzzle[0][3] = puzzle[0][2];
-  puzzle[0][2] = puzzle[0][1];
-  puzzle[0][1] = temp;
-  temp = puzzle[0][4];
-  puzzle[0][4] = puzzle[0][7];
-  puzzle[0][7] = puzzle[0][6];
-  puzzle[0][6] = puzzle[0][5];
-  puzzle[0][5] = temp;
-  temp = puzzle[0][8];
-  puzzle[0][8] = puzzle[0][11];
-  puzzle[0][11] = puzzle[0][10];
-  puzzle[0][10] = puzzle[0][9];
-  puzzle[0][9] = temp;
+  temp = puzzle.sticker[0][0];
+  puzzle.sticker[0][0] = puzzle.sticker[0][3];
+  puzzle.sticker[0][3] = puzzle.sticker[0][2];
+  puzzle.sticker[0][2] = puzzle.sticker[0][1];
+  puzzle.sticker[0][1] = temp;
+  temp = puzzle.sticker[0][4];
+  puzzle.sticker[0][4] = puzzle.sticker[0][7];
+  puzzle.sticker[0][7] = puzzle.sticker[0][6];
+  puzzle.sticker[0][6] = puzzle.sticker[0][5];
+  puzzle.sticker[0][5] = temp;
+  temp = puzzle.sticker[0][8];
+  puzzle.sticker[0][8] = puzzle.sticker[0][11];
+  puzzle.sticker[0][11] = puzzle.sticker[0][10];
+  puzzle.sticker[0][10] = puzzle.sticker[0][9];
+  puzzle.sticker[0][9] = temp;
   /* center */
-  temp = puzzle[0][12];
-  puzzle[0][12] = puzzle[0][15];
-  puzzle[0][15] = puzzle[0][14];
-  puzzle[0][14] = puzzle[0][13];
-  puzzle[0][13] = temp;
-  temp = puzzle[0][16];
-  puzzle[0][16] = puzzle[0][17];
-  puzzle[0][17] = puzzle[0][18];
-  puzzle[0][18] = puzzle[0][19];
-  puzzle[0][19] = temp;
+  temp = puzzle.sticker[0][12];
+  puzzle.sticker[0][12] = puzzle.sticker[0][15];
+  puzzle.sticker[0][15] = puzzle.sticker[0][14];
+  puzzle.sticker[0][14] = puzzle.sticker[0][13];
+  puzzle.sticker[0][13] = temp;
+  temp = puzzle.sticker[0][16];
+  puzzle.sticker[0][16] = puzzle.sticker[0][17];
+  puzzle.sticker[0][17] = puzzle.sticker[0][18];
+  puzzle.sticker[0][18] = puzzle.sticker[0][19];
+  puzzle.sticker[0][19] = temp;
   /* Z+ */
   /* edge */
-  temp = puzzle[3][0];
-  puzzle[3][0] = puzzle[3][2];
-  puzzle[3][2] = puzzle[3][10];
-  puzzle[3][10] = puzzle[3][8];
-  puzzle[3][8] = temp;
-  temp = puzzle[3][1];
-  puzzle[3][1] = puzzle[3][5];
-  puzzle[3][5] = puzzle[3][9];
-  puzzle[3][9] = puzzle[3][4];
-  puzzle[3][4] = temp;
-  temp = puzzle[3][3];
-  puzzle[3][3] = puzzle[3][6];
-  puzzle[3][6] = puzzle[3][11];
-  puzzle[3][11] = puzzle[3][7];
-  puzzle[3][7] = temp;
+  temp = puzzle.sticker[3][0];
+  puzzle.sticker[3][0] = puzzle.sticker[3][2];
+  puzzle.sticker[3][2] = puzzle.sticker[3][10];
+  puzzle.sticker[3][10] = puzzle.sticker[3][8];
+  puzzle.sticker[3][8] = temp;
+  temp = puzzle.sticker[3][1];
+  puzzle.sticker[3][1] = puzzle.sticker[3][5];
+  puzzle.sticker[3][5] = puzzle.sticker[3][9];
+  puzzle.sticker[3][9] = puzzle.sticker[3][4];
+  puzzle.sticker[3][4] = temp;
+  temp = puzzle.sticker[3][3];
+  puzzle.sticker[3][3] = puzzle.sticker[3][6];
+  puzzle.sticker[3][6] = puzzle.sticker[3][11];
+  puzzle.sticker[3][11] = puzzle.sticker[3][7];
+  puzzle.sticker[3][7] = temp;
   /* center */
-  temp = puzzle[3][12];
-  puzzle[3][12] = puzzle[3][19];
-  puzzle[3][19] = puzzle[3][16];
-  puzzle[3][16] = puzzle[3][15];
-  puzzle[3][15] = temp;
-  temp = puzzle[3][13];
-  puzzle[3][13] = puzzle[3][18];
-  puzzle[3][18] = puzzle[3][17];
-  puzzle[3][17] = puzzle[3][14];
-  puzzle[3][14] = temp;
+  temp = puzzle.sticker[3][12];
+  puzzle.sticker[3][12] = puzzle.sticker[3][19];
+  puzzle.sticker[3][19] = puzzle.sticker[3][16];
+  puzzle.sticker[3][16] = puzzle.sticker[3][15];
+  puzzle.sticker[3][15] = temp;
+  temp = puzzle.sticker[3][13];
+  puzzle.sticker[3][13] = puzzle.sticker[3][18];
+  puzzle.sticker[3][18] = puzzle.sticker[3][17];
+  puzzle.sticker[3][17] = puzzle.sticker[3][14];
+  puzzle.sticker[3][14] = temp;
   /* Z- */
   /* edge */
-  temp = puzzle[2][0];
-  puzzle[2][0] = puzzle[2][8];
-  puzzle[2][8] = puzzle[2][10];
-  puzzle[2][10] = puzzle[2][2];
-  puzzle[2][2] = temp;
-  temp = puzzle[2][1];
-  puzzle[2][1] = puzzle[2][4];
-  puzzle[2][4] = puzzle[2][9];
-  puzzle[2][9] = puzzle[2][5];
-  puzzle[2][5] = temp;
-  temp = puzzle[2][3];
-  puzzle[2][3] = puzzle[2][7];
-  puzzle[2][7] = puzzle[2][11];
-  puzzle[2][11] = puzzle[2][6];
-  puzzle[2][6] = temp;
+  temp = puzzle.sticker[2][0];
+  puzzle.sticker[2][0] = puzzle.sticker[2][8];
+  puzzle.sticker[2][8] = puzzle.sticker[2][10];
+  puzzle.sticker[2][10] = puzzle.sticker[2][2];
+  puzzle.sticker[2][2] = temp;
+  temp = puzzle.sticker[2][1];
+  puzzle.sticker[2][1] = puzzle.sticker[2][4];
+  puzzle.sticker[2][4] = puzzle.sticker[2][9];
+  puzzle.sticker[2][9] = puzzle.sticker[2][5];
+  puzzle.sticker[2][5] = temp;
+  temp = puzzle.sticker[2][3];
+  puzzle.sticker[2][3] = puzzle.sticker[2][7];
+  puzzle.sticker[2][7] = puzzle.sticker[2][11];
+  puzzle.sticker[2][11] = puzzle.sticker[2][6];
+  puzzle.sticker[2][6] = temp;
   /* center */
-  temp = puzzle[2][12];
-  puzzle[2][12] = puzzle[2][15];
-  puzzle[2][15] = puzzle[2][16];
-  puzzle[2][16] = puzzle[2][19];
-  puzzle[2][19] = temp;
-  temp = puzzle[2][13];
-  puzzle[2][13] = puzzle[2][14];
-  puzzle[2][14] = puzzle[2][17];
-  puzzle[2][17] = puzzle[2][18];
-  puzzle[2][18] = temp;
+  temp = puzzle.sticker[2][12];
+  puzzle.sticker[2][12] = puzzle.sticker[2][15];
+  puzzle.sticker[2][15] = puzzle.sticker[2][16];
+  puzzle.sticker[2][16] = puzzle.sticker[2][19];
+  puzzle.sticker[2][19] = temp;
+  temp = puzzle.sticker[2][13];
+  puzzle.sticker[2][13] = puzzle.sticker[2][14];
+  puzzle.sticker[2][14] = puzzle.sticker[2][17];
+  puzzle.sticker[2][17] = puzzle.sticker[2][18];
+  puzzle.sticker[2][18] = temp;
 }
 
 function X(puzzle){
   /* X- --> W- --> X+ --> W+ */
-  var temp = puzzle[1];
-  puzzle[1] = puzzle[6];
-  puzzle[6] = puzzle[0];
-  puzzle[0] = puzzle[7];
-  puzzle[7] = temp;
+  var temp = puzzle.sticker[1];
+  puzzle.sticker[1] = puzzle.sticker[6];
+  puzzle.sticker[6] = puzzle.sticker[0];
+  puzzle.sticker[0] = puzzle.sticker[7];
+  puzzle.sticker[7] = temp;
 
   /* Y- */
   /* edge */
-  temp = puzzle[5][0];
-  puzzle[5][0] = puzzle[5][1];
-  puzzle[5][1] = puzzle[5][2];
-  puzzle[5][2] = puzzle[5][3];
-  puzzle[5][3] = temp;
-  temp = puzzle[5][4];
-  puzzle[5][4] = puzzle[5][5];
-  puzzle[5][5] = puzzle[5][6];
-  puzzle[5][6] = puzzle[5][7];
-  puzzle[5][7] = temp;
-  temp = puzzle[5][8];
-  puzzle[5][8] = puzzle[5][9];
-  puzzle[5][9] = puzzle[5][10];
-  puzzle[5][10] = puzzle[5][11];
-  puzzle[5][11] = temp;
+  temp = puzzle.sticker[5][0];
+  puzzle.sticker[5][0] = puzzle.sticker[5][1];
+  puzzle.sticker[5][1] = puzzle.sticker[5][2];
+  puzzle.sticker[5][2] = puzzle.sticker[5][3];
+  puzzle.sticker[5][3] = temp;
+  temp = puzzle.sticker[5][4];
+  puzzle.sticker[5][4] = puzzle.sticker[5][5];
+  puzzle.sticker[5][5] = puzzle.sticker[5][6];
+  puzzle.sticker[5][6] = puzzle.sticker[5][7];
+  puzzle.sticker[5][7] = temp;
+  temp = puzzle.sticker[5][8];
+  puzzle.sticker[5][8] = puzzle.sticker[5][9];
+  puzzle.sticker[5][9] = puzzle.sticker[5][10];
+  puzzle.sticker[5][10] = puzzle.sticker[5][11];
+  puzzle.sticker[5][11] = temp;
   /* center */
-  temp = puzzle[5][12];
-  puzzle[5][12] = puzzle[5][13];
-  puzzle[5][13] = puzzle[5][14];
-  puzzle[5][14] = puzzle[5][15];
-  puzzle[5][15] = temp;
-  temp = puzzle[5][16];
-  puzzle[5][16] = puzzle[5][19];
-  puzzle[5][19] = puzzle[5][18];
-  puzzle[5][18] = puzzle[5][17];
-  puzzle[5][17] = temp;
+  temp = puzzle.sticker[5][12];
+  puzzle.sticker[5][12] = puzzle.sticker[5][13];
+  puzzle.sticker[5][13] = puzzle.sticker[5][14];
+  puzzle.sticker[5][14] = puzzle.sticker[5][15];
+  puzzle.sticker[5][15] = temp;
+  temp = puzzle.sticker[5][16];
+  puzzle.sticker[5][16] = puzzle.sticker[5][19];
+  puzzle.sticker[5][19] = puzzle.sticker[5][18];
+  puzzle.sticker[5][18] = puzzle.sticker[5][17];
+  puzzle.sticker[5][17] = temp;
   /* Y+ */
   /* edge */
-  temp = puzzle[4][0];
-  puzzle[4][0] = puzzle[4][3];
-  puzzle[4][3] = puzzle[4][2];
-  puzzle[4][2] = puzzle[4][1];
-  puzzle[4][1] = temp;
-  temp = puzzle[4][4];
-  puzzle[4][4] = puzzle[4][7];
-  puzzle[4][7] = puzzle[4][6];
-  puzzle[4][6] = puzzle[4][5];
-  puzzle[4][5] = temp;
-  temp = puzzle[4][8];
-  puzzle[4][8] = puzzle[4][11];
-  puzzle[4][11] = puzzle[4][10];
-  puzzle[4][10] = puzzle[4][9];
-  puzzle[4][9] = temp;
+  temp = puzzle.sticker[4][0];
+  puzzle.sticker[4][0] = puzzle.sticker[4][3];
+  puzzle.sticker[4][3] = puzzle.sticker[4][2];
+  puzzle.sticker[4][2] = puzzle.sticker[4][1];
+  puzzle.sticker[4][1] = temp;
+  temp = puzzle.sticker[4][4];
+  puzzle.sticker[4][4] = puzzle.sticker[4][7];
+  puzzle.sticker[4][7] = puzzle.sticker[4][6];
+  puzzle.sticker[4][6] = puzzle.sticker[4][5];
+  puzzle.sticker[4][5] = temp;
+  temp = puzzle.sticker[4][8];
+  puzzle.sticker[4][8] = puzzle.sticker[4][11];
+  puzzle.sticker[4][11] = puzzle.sticker[4][10];
+  puzzle.sticker[4][10] = puzzle.sticker[4][9];
+  puzzle.sticker[4][9] = temp;
   /* center */
-  temp = puzzle[4][12];
-  puzzle[4][12] = puzzle[4][15];
-  puzzle[4][15] = puzzle[4][14];
-  puzzle[4][14] = puzzle[4][13];
-  puzzle[4][13] = temp;
-  temp = puzzle[4][16];
-  puzzle[4][16] = puzzle[4][17];
-  puzzle[4][17] = puzzle[4][18];
-  puzzle[4][18] = puzzle[4][19];
-  puzzle[4][19] = temp;
+  temp = puzzle.sticker[4][12];
+  puzzle.sticker[4][12] = puzzle.sticker[4][15];
+  puzzle.sticker[4][15] = puzzle.sticker[4][14];
+  puzzle.sticker[4][14] = puzzle.sticker[4][13];
+  puzzle.sticker[4][13] = temp;
+  temp = puzzle.sticker[4][16];
+  puzzle.sticker[4][16] = puzzle.sticker[4][17];
+  puzzle.sticker[4][17] = puzzle.sticker[4][18];
+  puzzle.sticker[4][18] = puzzle.sticker[4][19];
+  puzzle.sticker[4][19] = temp;
   /* Z+ */
   /* edge */
-  temp = puzzle[3][0];
-  puzzle[3][0] = puzzle[3][4];
-  puzzle[3][4] = puzzle[3][8];
-  puzzle[3][8] = puzzle[3][7];
-  puzzle[3][7] = temp;
-  temp = puzzle[3][1];
-  puzzle[3][1] = puzzle[3][9];
-  puzzle[3][9] = puzzle[3][11];
-  puzzle[3][11] = puzzle[3][3];
-  puzzle[3][3] = temp;
-  temp = puzzle[3][2];
-  puzzle[3][2] = puzzle[3][5];
-  puzzle[3][5] = puzzle[3][10];
-  puzzle[3][10] = puzzle[3][6];
-  puzzle[3][6] = temp;
+  temp = puzzle.sticker[3][0];
+  puzzle.sticker[3][0] = puzzle.sticker[3][4];
+  puzzle.sticker[3][4] = puzzle.sticker[3][8];
+  puzzle.sticker[3][8] = puzzle.sticker[3][7];
+  puzzle.sticker[3][7] = temp;
+  temp = puzzle.sticker[3][1];
+  puzzle.sticker[3][1] = puzzle.sticker[3][9];
+  puzzle.sticker[3][9] = puzzle.sticker[3][11];
+  puzzle.sticker[3][11] = puzzle.sticker[3][3];
+  puzzle.sticker[3][3] = temp;
+  temp = puzzle.sticker[3][2];
+  puzzle.sticker[3][2] = puzzle.sticker[3][5];
+  puzzle.sticker[3][5] = puzzle.sticker[3][10];
+  puzzle.sticker[3][10] = puzzle.sticker[3][6];
+  puzzle.sticker[3][6] = temp;
   /* center */
-  temp = puzzle[3][12];
-  puzzle[3][12] = puzzle[3][19];
-  puzzle[3][19] = puzzle[3][18];
-  puzzle[3][18] = puzzle[3][13];
-  puzzle[3][13] = temp;
-  temp = puzzle[3][14];
-  puzzle[3][14] = puzzle[3][15];
-  puzzle[3][15] = puzzle[3][16];
-  puzzle[3][16] = puzzle[3][17];
-  puzzle[3][17] = temp;
+  temp = puzzle.sticker[3][12];
+  puzzle.sticker[3][12] = puzzle.sticker[3][19];
+  puzzle.sticker[3][19] = puzzle.sticker[3][18];
+  puzzle.sticker[3][18] = puzzle.sticker[3][13];
+  puzzle.sticker[3][13] = temp;
+  temp = puzzle.sticker[3][14];
+  puzzle.sticker[3][14] = puzzle.sticker[3][15];
+  puzzle.sticker[3][15] = puzzle.sticker[3][16];
+  puzzle.sticker[3][16] = puzzle.sticker[3][17];
+  puzzle.sticker[3][17] = temp;
   /* Z- */
   /* edge */
-  temp = puzzle[2][0];
-  puzzle[2][0] = puzzle[2][7];
-  puzzle[2][7] = puzzle[2][8];
-  puzzle[2][8] = puzzle[2][4];
-  puzzle[2][4] = temp;
-  temp = puzzle[2][1];
-  puzzle[2][1] = puzzle[2][3];
-  puzzle[2][3] = puzzle[2][11];
-  puzzle[2][11] = puzzle[2][9];
-  puzzle[2][9] = temp;
-  temp = puzzle[2][2];
-  puzzle[2][2] = puzzle[2][6];
-  puzzle[2][6] = puzzle[2][10];
-  puzzle[2][10] = puzzle[2][5];
-  puzzle[2][5] = temp;
+  temp = puzzle.sticker[2][0];
+  puzzle.sticker[2][0] = puzzle.sticker[2][7];
+  puzzle.sticker[2][7] = puzzle.sticker[2][8];
+  puzzle.sticker[2][8] = puzzle.sticker[2][4];
+  puzzle.sticker[2][4] = temp;
+  temp = puzzle.sticker[2][1];
+  puzzle.sticker[2][1] = puzzle.sticker[2][3];
+  puzzle.sticker[2][3] = puzzle.sticker[2][11];
+  puzzle.sticker[2][11] = puzzle.sticker[2][9];
+  puzzle.sticker[2][9] = temp;
+  temp = puzzle.sticker[2][2];
+  puzzle.sticker[2][2] = puzzle.sticker[2][6];
+  puzzle.sticker[2][6] = puzzle.sticker[2][10];
+  puzzle.sticker[2][10] = puzzle.sticker[2][5];
+  puzzle.sticker[2][5] = temp;
   /* center */
-  temp = puzzle[2][12];
-  puzzle[2][12] = puzzle[2][13];
-  puzzle[2][13] = puzzle[2][18];
-  puzzle[2][18] = puzzle[2][19];
-  puzzle[2][19] = temp;
-  temp = puzzle[2][14];
-  puzzle[2][14] = puzzle[2][17];
-  puzzle[2][17] = puzzle[2][16];
-  puzzle[2][16] = puzzle[2][15];
-  puzzle[2][15] = temp;
+  temp = puzzle.sticker[2][12];
+  puzzle.sticker[2][12] = puzzle.sticker[2][13];
+  puzzle.sticker[2][13] = puzzle.sticker[2][18];
+  puzzle.sticker[2][18] = puzzle.sticker[2][19];
+  puzzle.sticker[2][19] = temp;
+  temp = puzzle.sticker[2][14];
+  puzzle.sticker[2][14] = puzzle.sticker[2][17];
+  puzzle.sticker[2][17] = puzzle.sticker[2][16];
+  puzzle.sticker[2][16] = puzzle.sticker[2][15];
+  puzzle.sticker[2][15] = temp;
 }
 
 async function main() {
@@ -966,24 +969,44 @@ async function main() {
   const XButton = document.getElementById('x-button');
   XButton.addEventListener('click', event => {
     X(app.puzzle);
+    app.puzzle.history.push("X");
   });
   const YButton = document.getElementById('y-button');
   YButton.addEventListener('click', event => {
     Y(app.puzzle);
+    app.puzzle.history.push("Y");
   });
   const ZButton = document.getElementById('z-button');
   ZButton.addEventListener('click', event => {
     Z(app.puzzle);
+    app.puzzle.history.push("Z");
   });
   /* twist */
   /* state */
   const Scramble = document.getElementById('scramble');
   Scramble.addEventListener('click', event => {
-    app.puzzle = scramble(app.textures);
+    app.puzzle.sticker = scramble(app.textures);
   });
   const Reset = document.getElementById('reset');
   Reset.addEventListener('click', event => {
-    app.puzzle = reset(app.textures);
+    app.puzzle.sticker = reset(app.textures);
+  });
+  const Undo = document.getElementById('undo');
+  Undo.addEventListener('click', event => {
+    const action = app.puzzle.history.pop();
+    if (action == "X") {
+      X(app.puzzle);
+      X(app.puzzle);
+      X(app.puzzle);
+    } else if (action == "Y") {
+      Y(app.puzzle);
+      Y(app.puzzle);
+      Y(app.puzzle);
+    } else if (action == "Z") {
+      Z(app.puzzle);
+      Z(app.puzzle);
+      Z(app.puzzle);
+    }
   });
 
   /* view control */
