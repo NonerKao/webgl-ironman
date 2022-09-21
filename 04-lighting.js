@@ -61,15 +61,15 @@ async function setup() {
 
   const textures = Object.fromEntries(
     await Promise.all(Object.entries({
-      cosmos: 'http://0.0.0.0:8080/linen.jpg',
-      red: 'http://0.0.0.0:8080/red.jpeg',
-      orange: 'http://0.0.0.0:8080/orange.jpeg',
-      blue: 'http://0.0.0.0:8080/blue.jpeg',
-      green: 'http://0.0.0.0:8080/green.jpeg',
-      yellow: 'http://0.0.0.0:8080/yellow.jpeg',
-      white: 'http://0.0.0.0:8080/white.jpeg',
-      pink: 'http://0.0.0.0:8080/pink.jpeg',
-      coffee: 'http://0.0.0.0:8080/coffee.jpeg',
+      cosmos: 'http://0.0.0.0:8081/linen.jpg',
+      red: 'http://0.0.0.0:8081/red.jpeg',
+      orange: 'http://0.0.0.0:8081/orange.jpeg',
+      blue: 'http://0.0.0.0:8081/blue.jpeg',
+      green: 'http://0.0.0.0:8081/green.jpeg',
+      yellow: 'http://0.0.0.0:8081/yellow.jpeg',
+      white: 'http://0.0.0.0:8081/white.jpeg',
+      pink: 'http://0.0.0.0:8081/pink.jpeg',
+      coffee: 'http://0.0.0.0:8081/coffee.jpeg',
     }).map(async ([name, url]) => {
       const image = await loadImage(url);
       const texture = gl.createTexture();
@@ -272,7 +272,121 @@ function reset(textures) {
 }
 
 function twist(puzzle, oct) {
-
+  var temp;
+  if (oct == 0) {
+    /* W-: 6 */
+    temp = puzzle.sticker[6][7];
+    puzzle.sticker[6][7] = puzzle.sticker[6][8];
+    puzzle.sticker[6][8] = puzzle.sticker[6][11];
+    puzzle.sticker[6][11] = temp;
+    /* X+ --> Z+ --> Y+ --> X+ */
+    temp = puzzle.sticker[1][0];
+    puzzle.sticker[1][0] = puzzle.sticker[4][9];
+    puzzle.sticker[4][9] = puzzle.sticker[3][6];
+    puzzle.sticker[3][6] = temp;
+    temp = puzzle.sticker[1][3];
+    puzzle.sticker[1][3] = puzzle.sticker[4][4];
+    puzzle.sticker[4][4] = puzzle.sticker[3][10];
+    puzzle.sticker[3][10] = temp;
+    temp = puzzle.sticker[1][4];
+    puzzle.sticker[1][4] = puzzle.sticker[4][10];
+    puzzle.sticker[4][10] = puzzle.sticker[3][3];
+    puzzle.sticker[3][3] = temp;
+    temp = puzzle.sticker[1][6];
+    puzzle.sticker[1][6] = puzzle.sticker[4][0];
+    puzzle.sticker[4][0] = puzzle.sticker[3][9];
+    puzzle.sticker[3][9] = temp;
+    temp = puzzle.sticker[1][7];
+    puzzle.sticker[1][7] = puzzle.sticker[4][8];
+    puzzle.sticker[4][8] = puzzle.sticker[3][11];
+    puzzle.sticker[3][11] = temp;
+    temp = puzzle.sticker[1][8];
+    puzzle.sticker[1][8] = puzzle.sticker[4][11];
+    puzzle.sticker[4][11] = puzzle.sticker[3][7];
+    puzzle.sticker[3][7] = temp;
+    temp = puzzle.sticker[1][9];
+    puzzle.sticker[1][9] = puzzle.sticker[4][6];
+    puzzle.sticker[4][6] = puzzle.sticker[3][0];
+    puzzle.sticker[3][0] = temp;
+    temp = puzzle.sticker[1][10];
+    puzzle.sticker[1][10] = puzzle.sticker[4][3];
+    puzzle.sticker[4][3] = puzzle.sticker[3][4];
+    puzzle.sticker[3][4] = temp;
+    temp = puzzle.sticker[1][11];
+    puzzle.sticker[1][11] = puzzle.sticker[4][7];
+    puzzle.sticker[4][7] = puzzle.sticker[3][8];
+    puzzle.sticker[3][8] = temp;
+    temp = puzzle.sticker[1][12];
+    puzzle.sticker[1][12] = puzzle.sticker[4][12];
+    puzzle.sticker[4][12] = puzzle.sticker[3][12];
+    puzzle.sticker[3][12] = temp;
+    temp = puzzle.sticker[1][13];
+    puzzle.sticker[1][13] = puzzle.sticker[4][15];
+    puzzle.sticker[4][15] = puzzle.sticker[3][19];
+    puzzle.sticker[3][19] = temp;
+    temp = puzzle.sticker[1][14];
+    puzzle.sticker[1][14] = puzzle.sticker[4][16];
+    puzzle.sticker[4][16] = puzzle.sticker[3][18];
+    puzzle.sticker[3][18] = temp;
+    temp = puzzle.sticker[1][15];
+    puzzle.sticker[1][15] = puzzle.sticker[4][19];
+    puzzle.sticker[4][19] = puzzle.sticker[3][13];
+    puzzle.sticker[3][13] = temp;
+    temp = puzzle.sticker[1][16];
+    puzzle.sticker[1][16] = puzzle.sticker[4][18];
+    puzzle.sticker[4][18] = puzzle.sticker[3][14];
+    puzzle.sticker[3][14] = temp;
+    temp = puzzle.sticker[1][18];
+    puzzle.sticker[1][18] = puzzle.sticker[4][14];
+    puzzle.sticker[4][14] = puzzle.sticker[3][16];
+    puzzle.sticker[3][16] = temp;
+    temp = puzzle.sticker[1][19];
+    puzzle.sticker[1][19] = puzzle.sticker[4][13];
+    puzzle.sticker[4][13] = puzzle.sticker[3][15];
+    puzzle.sticker[3][15] = temp;
+    temp = puzzle.sticker[1][20];
+    puzzle.sticker[1][20] = puzzle.sticker[4][20];
+    puzzle.sticker[4][20] = puzzle.sticker[3][20];
+    puzzle.sticker[3][20] = temp;
+    /* X- --> Z- --> Y- --> X- */
+    temp = puzzle.sticker[0][4];
+    puzzle.sticker[0][4] = puzzle.sticker[5][10];
+    puzzle.sticker[5][10] = puzzle.sticker[2][3];
+    puzzle.sticker[2][3] = temp;
+    temp = puzzle.sticker[0][8];
+    puzzle.sticker[0][8] = puzzle.sticker[5][11];
+    puzzle.sticker[5][11] = puzzle.sticker[2][7];
+    puzzle.sticker[2][7] = temp;
+    temp = puzzle.sticker[0][9];
+    puzzle.sticker[0][9] = puzzle.sticker[5][6];
+    puzzle.sticker[5][6] = puzzle.sticker[2][0];
+    puzzle.sticker[2][0] = temp;
+    temp = puzzle.sticker[0][13];
+    puzzle.sticker[0][13] = puzzle.sticker[5][15];
+    puzzle.sticker[5][15] = puzzle.sticker[2][19];
+    puzzle.sticker[2][19] = temp;
+    /* W+: 7 */
+    temp = puzzle.sticker[7][0];
+    puzzle.sticker[7][0] = puzzle.sticker[7][3];
+    puzzle.sticker[7][3] = puzzle.sticker[7][7];
+    puzzle.sticker[7][7] = temp;
+    temp = puzzle.sticker[7][1];
+    puzzle.sticker[7][1] = puzzle.sticker[7][6];
+    puzzle.sticker[7][6] = puzzle.sticker[7][8];
+    puzzle.sticker[7][8] = temp;
+    temp = puzzle.sticker[7][2];
+    puzzle.sticker[7][2] = puzzle.sticker[7][11];
+    puzzle.sticker[7][11] = puzzle.sticker[7][4];
+    puzzle.sticker[7][4] = temp;
+    temp = puzzle.sticker[7][12];
+    puzzle.sticker[7][12] = puzzle.sticker[7][18];
+    puzzle.sticker[7][18] = puzzle.sticker[7][16];
+    puzzle.sticker[7][16] = temp;
+    temp = puzzle.sticker[7][13];
+    puzzle.sticker[7][13] = puzzle.sticker[7][17];
+    puzzle.sticker[7][17] = puzzle.sticker[7][15];
+    puzzle.sticker[7][15] = temp;
+  }
 }
 
 function scramble(textures) {
@@ -410,7 +524,7 @@ function renderRegularTetrahedron(app, viewMatrix, cellID) {
       matrix4.scale(1, 1, 1),
     ) : matrix4.multiply(
       translateCell(state.explode2, cellID),
-      matrix4.yRotate(degToRad((i-4)*90)),
+      matrix4.yRotate(degToRad((i-3)*(-90))),
       matrix4.zRotate(degToRad(-90)),
       matrix4.translate(state.explode1/2, state.explode1/2, -state.explode1/2),
       matrix4.scale(1, 1, 1),
@@ -1070,6 +1184,7 @@ async function main() {
   O0.addEventListener('click', event => {
     twist(app.puzzle, 0);
     app.puzzle.history.push("0");
+    console.log(app.puzzle.history);
   });
   /* state */
   const Scramble = document.getElementById('scramble');
