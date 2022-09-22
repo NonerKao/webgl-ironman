@@ -2022,44 +2022,7 @@ async function main() {
   });
   const Undo = document.getElementById('undo');
   Undo.addEventListener('click', event => {
-    const action = app.puzzle.history.pop();
-    if (action == "X") {
-      X(app.puzzle);
-      X(app.puzzle);
-      X(app.puzzle);
-    } else if (action == "Y") {
-      Y(app.puzzle);
-      Y(app.puzzle);
-      Y(app.puzzle);
-    } else if (action == "Z") {
-      Z(app.puzzle);
-      Z(app.puzzle);
-      Z(app.puzzle);
-    } else if (action == "0") {
-      twist(app.puzzle, 0);
-      twist(app.puzzle, 0);
-    } else if (action == "1") {
-      twist(app.puzzle, 1);
-      twist(app.puzzle, 1);
-    } else if (action == "2") {
-      twist(app.puzzle, 2);
-      twist(app.puzzle, 2);
-    } else if (action == "3") {
-      twist(app.puzzle, 3);
-      twist(app.puzzle, 3);
-    } else if (action == "4") {
-      twist(app.puzzle, 4);
-      twist(app.puzzle, 4);
-    } else if (action == "5") {
-      twist(app.puzzle, 5);
-      twist(app.puzzle, 5);
-    } else if (action == "6") {
-      twist(app.puzzle, 6);
-      twist(app.puzzle, 6);
-    } else if (action == "7") {
-      twist(app.puzzle, 7);
-      twist(app.puzzle, 7);
-    }
+    undo(app.puzzle);
   });
 
   /* view control */
@@ -2073,6 +2036,47 @@ async function main() {
   startLoop(app);
 }
 main();
+
+function undo(puzzle) {
+    const action = puzzle.history.pop();
+    if (action == "X") {
+      X(puzzle);
+      X(puzzle);
+      X(puzzle);
+    } else if (action == "Y") {
+      Y(puzzle);
+      Y(puzzle);
+      Y(puzzle);
+    } else if (action == "Z") {
+      Z(puzzle);
+      Z(puzzle);
+      Z(puzzle);
+    } else if (action == "0") {
+      twist(puzzle, 0);
+      twist(puzzle, 0);
+    } else if (action == "1") {
+      twist(puzzle, 1);
+      twist(puzzle, 1);
+    } else if (action == "2") {
+      twist(puzzle, 2);
+      twist(puzzle, 2);
+    } else if (action == "3") {
+      twist(puzzle, 3);
+      twist(puzzle, 3);
+    } else if (action == "4") {
+      twist(puzzle, 4);
+      twist(puzzle, 4);
+    } else if (action == "5") {
+      twist(puzzle, 5);
+      twist(puzzle, 5);
+    } else if (action == "6") {
+      twist(puzzle, 6);
+      twist(puzzle, 6);
+    } else if (action == "7") {
+      twist(puzzle, 7);
+      twist(puzzle, 7);
+    }
+}
 
 function degToRad(deg) {
   return deg * Math.PI / 180;
@@ -2118,6 +2122,38 @@ function handleKeyUp(app, event) {
     case 'KeyW':
     case 'KeyS':
       app.state.cameraVelocity[2] = 0;
+      break;
+    case 'Digit0':
+      twist(app.puzzle, 0);
+      app.puzzle.history.push("0");
+      break;
+    case 'Digit1':
+      twist(app.puzzle, 1);
+      app.puzzle.history.push("1");
+      break;
+    case 'Digit2':
+      twist(app.puzzle, 2);
+      app.puzzle.history.push("2");
+      break;
+    case 'Digit3':
+      twist(app.puzzle, 3);
+      app.puzzle.history.push("3");
+      break;
+    case 'Digit4':
+      twist(app.puzzle, 4);
+      app.puzzle.history.push("4");
+      break;
+    case 'Digit5':
+      twist(app.puzzle, 5);
+      app.puzzle.history.push("5");
+      break;
+    case 'Digit6':
+      twist(app.puzzle, 6);
+      app.puzzle.history.push("6");
+      break;
+    case 'Digit7':
+      twist(app.puzzle, 7);
+      app.puzzle.history.push("7");
       break;
   }
 }
