@@ -1180,27 +1180,6 @@ function twist(puzzle, oct) {
   }
 }
 
-function scramble(textures) {
-  var textureArray = new Array(8).fill(0);
-  textureArray[0] = textures.orange; // X-
-  textureArray[1] = textures.red;    // X+
-  textureArray[2] = textures.green;  // Y-
-  textureArray[3] = textures.blue;   // Y+
-  textureArray[4] = textures.yellow; // Z-
-  textureArray[5] = textures.white;  // Z+
-  textureArray[6] = textures.pink;   // W-
-  textureArray[7] = textures.coffee; // W+, invisible by default
-
-  var sticker = new Array(8).fill(0).map(() => new Array(21).fill(0));
-  for (var i = 0; i < 8; i++) { 
-    for (var j = 0; j < 21; j++) { 
-      sticker[i][j] = textureArray[Math.floor(Math.random()*8)];
-    }
-  }
-
-  return sticker;
-}
-
 /***
 *
 *       *-8--*
@@ -2014,7 +1993,18 @@ async function main() {
   /* state */
   const Scramble = document.getElementById('scramble');
   Scramble.addEventListener('click', event => {
-    app.puzzle.sticker = scramble(app.textures);
+    app.puzzle.sticker = reset(app.textures);
+    for (var i = 0; i < app.state.explode2; i++) {
+      const op = Math.floor(Math.random()*11);
+      if (op < 8)
+        twist(app.puzzle, op);
+      else if (op == 8)
+        X(app.puzzle);
+      else if (op == 9)
+        Y(app.puzzle);
+      else if (op == 10)
+        Z(app.puzzle);
+    }
   });
   const Reset = document.getElementById('reset');
   Reset.addEventListener('click', event => {
