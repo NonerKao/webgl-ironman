@@ -61,15 +61,15 @@ async function setup() {
 
   const textures = Object.fromEntries(
     await Promise.all(Object.entries({
-      linen: 'http://0.0.0.0:8082/linen.jpg',
-      red: 'http://0.0.0.0:8082/red.jpeg',
-      orange: 'http://0.0.0.0:8082/orange.jpeg',
-      blue: 'http://0.0.0.0:8082/blue.jpeg',
-      green: 'http://0.0.0.0:8082/green.jpeg',
-      yellow: 'http://0.0.0.0:8082/yellow.jpeg',
-      white: 'http://0.0.0.0:8082/white.jpeg',
-      pink: 'http://0.0.0.0:8082/pink.jpeg',
-      coffee: 'http://0.0.0.0:8082/coffee.jpeg',
+      linen: 'http://0.0.0.0:8083/linen.jpg',
+      red: 'http://0.0.0.0:8083/red.jpeg',
+      orange: 'http://0.0.0.0:8083/orange.jpeg',
+      blue: 'http://0.0.0.0:8083/blue.jpeg',
+      green: 'http://0.0.0.0:8083/green.jpeg',
+      yellow: 'http://0.0.0.0:8083/yellow.jpeg',
+      white: 'http://0.0.0.0:8083/white.jpeg',
+      pink: 'http://0.0.0.0:8083/pink.jpeg',
+      coffee: 'http://0.0.0.0:8083/coffee.jpeg',
     }).map(async ([name, url]) => {
       const image = await loadImage(url);
       const texture = gl.createTexture();
@@ -268,6 +268,7 @@ async function setup() {
       cameraVelocity: [0, 0, 0],
       explode1: 0.5,
       explode2: 4,
+      allmatrix: [matrix4.scale(1, 1, 1), matrix4.scale(1, 1, 1), matrix4.scale(1, 1, 1)],
     },
     time: 0,
     puzzle: puzzle,
@@ -296,7 +297,7 @@ function renderOctahedron(app, viewMatrix) {
   { 
     gl.bindVertexArray(objects.octa.vao);
 
-    const worldMatrix = matrix4.scale(2, 2, 2);
+    const worldMatrix = matrix4.multiply(matrix4.scale(2, 2, 2), state.allmatrix[0], state.allmatrix[1], state.allmatrix[2]);
 
     twgl.setUniforms(programInfo, {
       u_matrix: matrix4.multiply(viewMatrix, worldMatrix),
@@ -324,6 +325,9 @@ function renderRest(app, viewMatrix, cellID) {
 
     const worldMatrix = (cellID == 7) ? translateCell(state.explode2, cellID)
       : (cellID == 0) ? matrix4.multiply(
+        state.allmatrix[0],
+        state.allmatrix[1],
+        state.allmatrix[2],
         matrix4.translate(-1-state.explode1/2, -1-state.explode1/2, 1+state.explode1/2),
         matrix4.scale(1, 1, 1),
       ) : (cellID == 1) ? matrix4.multiply(
@@ -332,6 +336,9 @@ function renderRest(app, viewMatrix, cellID) {
         matrix4.yRotate(degToRad(180)),
         matrix4.scale(1, 1, 1),
       ) : (cellID == 5 /*shit, Z+ as Y-*/) ? matrix4.multiply(
+        state.allmatrix[0],
+        state.allmatrix[1],
+        state.allmatrix[2],
         matrix4.xRotate(degToRad(180)),
         matrix4.translate(-1-state.explode1/2, -1-state.explode1/2, 1+state.explode1/2),
         matrix4.scale(1, 1, 1),
@@ -341,6 +348,9 @@ function renderRest(app, viewMatrix, cellID) {
         matrix4.yRotate(degToRad(180)),
         matrix4.scale(1, 1, 1),
       ) : (cellID == 2 /*shit, Y- as Z-*/) ? matrix4.multiply(
+        state.allmatrix[0],
+        state.allmatrix[1],
+        state.allmatrix[2],
         matrix4.yRotate(degToRad(180)),
         matrix4.translate(-1-state.explode1/2, -1-state.explode1/2, 1+state.explode1/2),
         matrix4.scale(1, 1, 1),
@@ -350,6 +360,9 @@ function renderRest(app, viewMatrix, cellID) {
         matrix4.yRotate(degToRad(180)),
         matrix4.scale(1, 1, 1),
       ) : matrix4.multiply(
+        state.allmatrix[0],
+        state.allmatrix[1],
+        state.allmatrix[2],
         matrix4.zRotate(degToRad(180)),
         matrix4.translate(-1-state.explode1/2, -1-state.explode1/2, 1+state.explode1/2),
         matrix4.scale(1, 1, 1),
@@ -391,6 +404,9 @@ function renderTetrahedron(app, viewMatrix, cellID) {
       matrix4.translate(-state.explode1/2, -state.explode1/2, state.explode1/2),
       matrix4.scale(1, 1, 1),
     ) : (cellID == 1) ? matrix4.multiply(
+      state.allmatrix[0],
+      state.allmatrix[1],
+      state.allmatrix[2],
       matrix4.translate(state.explode1/2, state.explode1/2, -state.explode1/2),
       matrix4.scale(1, 1, 1),
     ) : (cellID == 5) ? matrix4.multiply(
@@ -400,6 +416,9 @@ function renderTetrahedron(app, viewMatrix, cellID) {
       matrix4.translate(-state.explode1/2, -state.explode1/2, state.explode1/2),
       matrix4.scale(1, 1, 1),
     ) : (cellID == 4) ? matrix4.multiply(
+      state.allmatrix[0],
+      state.allmatrix[1],
+      state.allmatrix[2],
       matrix4.xRotate(degToRad(180)),
       matrix4.translate(state.explode1/2, state.explode1/2, -state.explode1/2),
       matrix4.scale(1, 1, 1),
@@ -409,10 +428,16 @@ function renderTetrahedron(app, viewMatrix, cellID) {
       matrix4.translate(-state.explode1/2, -state.explode1/2, state.explode1/2),
       matrix4.scale(1, 1, 1),
     ) : (cellID == 3) ? matrix4.multiply(
+      state.allmatrix[0],
+      state.allmatrix[1],
+      state.allmatrix[2],
       matrix4.yRotate(degToRad(180)),
       matrix4.translate(state.explode1/2, state.explode1/2, -state.explode1/2),
       matrix4.scale(1, 1, 1),
     ) : matrix4.multiply(
+      state.allmatrix[0],
+      state.allmatrix[1],
+      state.allmatrix[2],
       matrix4.zRotate(degToRad(180)),
       matrix4.translate(state.explode1/2, state.explode1/2, -state.explode1/2),
       matrix4.scale(1, 1, 1),
@@ -462,6 +487,13 @@ function render(app) {
   gl.useProgram(programInfo.program);
 
   const cameraMatrix = matrix4.lookAt(state.cameraPosition, [0, 0, 0], [0, 1, 0]);
+
+  if (app.state.cameraVelocity[0] )
+    app.state.allmatrix[0] = matrix4.multiply( app.state.allmatrix[0], matrix4.yRotate(degToRad(45)), matrix4.xRotate(degToRad(-45)), matrix4.zRotate(degToRad(1)), matrix4.xRotate(degToRad(45)), matrix4.yRotate(degToRad(-45)));
+  if (app.state.cameraVelocity[1] )
+    app.state.allmatrix[1] = matrix4.multiply(app.state.allmatrix[1], matrix4.yRotate(degToRad(1)));
+  if (app.state.cameraVelocity[2] )
+    app.state.allmatrix[2] = matrix4.multiply( app.state.allmatrix[2], matrix4.yRotate(degToRad(-45)), matrix4.xRotate(degToRad(45)), matrix4.zRotate(degToRad(1)), matrix4.xRotate(degToRad(-45)), matrix4.yRotate(degToRad(45)));
 
   const viewMatrix = matrix4.multiply(
     matrix4.perspective(state.fieldOfView, gl.canvas.width / gl.canvas.height, 0.1, 2000),
@@ -582,13 +614,6 @@ function render(app) {
 function startLoop(app, now = 0) {
   const timeDiff = (now - app.time);
   app.time = now;
-
-  var l = app.state.cameraPosition[2]*app.state.cameraPosition[2]+app.state.cameraPosition[0]*app.state.cameraPosition[0];
-  l = Math.sqrt(l)
-
-  app.state.cameraPosition[0] += (app.state.cameraVelocity[0] * (app.state.cameraPosition[2]) + app.state.cameraVelocity[2] * (-app.state.cameraPosition[0])) * timeDiff / l;
-  app.state.cameraPosition[1] += app.state.cameraVelocity[1] * timeDiff;
-  app.state.cameraPosition[2] += (app.state.cameraVelocity[0] * (-app.state.cameraPosition[0]) + app.state.cameraVelocity[2] * (-app.state.cameraPosition[2])) * timeDiff / l;
 
   render(app, timeDiff);
   requestAnimationFrame(now => startLoop(app, now));
