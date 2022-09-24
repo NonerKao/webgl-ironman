@@ -2015,7 +2015,7 @@ async function main() {
   const Scramble = document.getElementById('scramble');
   Scramble.addEventListener('click', event => {
     app.puzzle.sticker = reset(app.textures);
-    for (var i = 0; i < 4; i++) {
+    for (var i = 0; i < 8; i++) {
       const op = Math.floor(Math.random()*11);
       if (op < 8) {
         for (var j = 0; j < Math.floor(Math.random()*2) + 1; j++) {
