@@ -61,15 +61,15 @@ async function setup() {
 
   const textures = Object.fromEntries(
     await Promise.all(Object.entries({
-      cosmos: 'http://0.0.0.0:8080/linen.jpg',
-      red: 'http://0.0.0.0:8080/red.jpeg',
-      orange: 'http://0.0.0.0:8080/orange.jpeg',
-      blue: 'http://0.0.0.0:8080/blue.jpeg',
-      green: 'http://0.0.0.0:8080/green.jpeg',
-      yellow: 'http://0.0.0.0:8080/yellow.jpeg',
-      white: 'http://0.0.0.0:8080/white.jpeg',
-      pink: 'http://0.0.0.0:8080/pink.jpeg',
-      coffee: 'http://0.0.0.0:8080/coffee.jpeg',
+      cosmos: 'http://0.0.0.0:8081/linen.jpg',
+      red: 'http://0.0.0.0:8081/red.jpeg',
+      orange: 'http://0.0.0.0:8081/orange.jpeg',
+      blue: 'http://0.0.0.0:8081/blue.jpeg',
+      green: 'http://0.0.0.0:8081/green.jpeg',
+      yellow: 'http://0.0.0.0:8081/yellow.jpeg',
+      white: 'http://0.0.0.0:8081/white.jpeg',
+      pink: 'http://0.0.0.0:8081/pink.jpeg',
+      coffee: 'http://0.0.0.0:8081/coffee.jpeg',
     }).map(async ([name, url]) => {
       const image = await loadImage(url);
       const texture = gl.createTexture();
@@ -2015,25 +2015,28 @@ async function main() {
   const Scramble = document.getElementById('scramble');
   Scramble.addEventListener('click', event => {
     app.puzzle.sticker = reset(app.textures);
-    for (var i = 0; i < 2; i++) {
+    for (var i = 0; i < 4; i++) {
       const op = Math.floor(Math.random()*11);
-      if (op < 8)
-        twist(app.puzzle, op);
-      else if (op == 8)
+      if (op < 8) {
+        for (var j = 0; j < Math.floor(Math.random()*2) + 1; j++) {
+          twist(app.puzzle, op);
+	}
+      } else if (op == 8) {
         X(app.puzzle);
         for (var j = 0; j < Math.floor(Math.random()*2); j++) {
           X(app.puzzle);
 	}
-      else if (op == 9)
+      } else if (op == 9) {
         Y(app.puzzle);
         for (var j = 0; j < Math.floor(Math.random()*2); j++) {
           Y(app.puzzle);
 	}
-      else if (op == 10)
+      } else if (op == 10) {
         Z(app.puzzle);
         for (var j = 0; j < Math.floor(Math.random()*2); j++) {
           Z(app.puzzle);
 	}
+      }
     }
   });
   const Reset = document.getElementById('reset');
