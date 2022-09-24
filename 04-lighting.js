@@ -61,15 +61,15 @@ async function setup() {
 
   const textures = Object.fromEntries(
     await Promise.all(Object.entries({
-      cosmos: 'http://0.0.0.0:8082/linen.jpg',
-      red: 'http://0.0.0.0:8082/red.jpeg',
-      orange: 'http://0.0.0.0:8082/orange.jpeg',
-      blue: 'http://0.0.0.0:8082/blue.jpeg',
-      green: 'http://0.0.0.0:8082/green.jpeg',
-      yellow: 'http://0.0.0.0:8082/yellow.jpeg',
-      white: 'http://0.0.0.0:8082/white.jpeg',
-      pink: 'http://0.0.0.0:8082/pink.jpeg',
-      coffee: 'http://0.0.0.0:8082/coffee.jpeg',
+      cosmos: 'http://0.0.0.0:8080/linen.jpg',
+      red: 'http://0.0.0.0:8080/red.jpeg',
+      orange: 'http://0.0.0.0:8080/orange.jpeg',
+      blue: 'http://0.0.0.0:8080/blue.jpeg',
+      green: 'http://0.0.0.0:8080/green.jpeg',
+      yellow: 'http://0.0.0.0:8080/yellow.jpeg',
+      white: 'http://0.0.0.0:8080/white.jpeg',
+      pink: 'http://0.0.0.0:8080/pink.jpeg',
+      coffee: 'http://0.0.0.0:8080/coffee.jpeg',
     }).map(async ([name, url]) => {
       const image = await loadImage(url);
       const texture = gl.createTexture();
@@ -1934,6 +1934,27 @@ async function main() {
 
   /* puzzle control */
   /* pure rotation */
+  const xButton = document.getElementById('x-button2');
+  xButton.addEventListener('click', event => {
+    X(app.puzzle);
+    X(app.puzzle);
+    X(app.puzzle);
+    app.puzzle.history.push("x");
+  });
+  const yButton = document.getElementById('y-button2');
+  yButton.addEventListener('click', event => {
+    Y(app.puzzle);
+    Y(app.puzzle);
+    Y(app.puzzle);
+    app.puzzle.history.push("y");
+  });
+  const zButton = document.getElementById('z-button2');
+  zButton.addEventListener('click', event => {
+    Z(app.puzzle);
+    Z(app.puzzle);
+    Z(app.puzzle);
+    app.puzzle.history.push("z");
+  });
   const XButton = document.getElementById('x-button');
   XButton.addEventListener('click', event => {
     X(app.puzzle);
@@ -1994,16 +2015,25 @@ async function main() {
   const Scramble = document.getElementById('scramble');
   Scramble.addEventListener('click', event => {
     app.puzzle.sticker = reset(app.textures);
-    for (var i = 0; i < app.state.explode2; i++) {
+    for (var i = 0; i < 2; i++) {
       const op = Math.floor(Math.random()*11);
       if (op < 8)
         twist(app.puzzle, op);
       else if (op == 8)
         X(app.puzzle);
+        for (var j = 0; j < Math.floor(Math.random()*2); j++) {
+          X(app.puzzle);
+	}
       else if (op == 9)
         Y(app.puzzle);
+        for (var j = 0; j < Math.floor(Math.random()*2); j++) {
+          Y(app.puzzle);
+	}
       else if (op == 10)
         Z(app.puzzle);
+        for (var j = 0; j < Math.floor(Math.random()*2); j++) {
+          Z(app.puzzle);
+	}
     }
   });
   const Reset = document.getElementById('reset');
@@ -2029,14 +2059,20 @@ main();
 
 function undo(puzzle) {
     const action = puzzle.history.pop();
-    if (action == "X") {
+    if (action == "x") {
+      X(puzzle);
+    } else if (action == "X") {
       X(puzzle);
       X(puzzle);
       X(puzzle);
+    } else if (action == "y") {
+      Y(puzzle);
     } else if (action == "Y") {
       Y(puzzle);
       Y(puzzle);
       Y(puzzle);
+    } else if (action == "z") {
+      Z(puzzle);
     } else if (action == "Z") {
       Z(puzzle);
       Z(puzzle);
