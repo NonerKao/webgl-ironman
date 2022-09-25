@@ -61,15 +61,15 @@ async function setup() {
 
   const textures = Object.fromEntries(
     await Promise.all(Object.entries({
-      cosmos: 'http://0.0.0.0:8081/linen.jpg',
-      red: 'http://0.0.0.0:8081/red.jpeg',
-      orange: 'http://0.0.0.0:8081/orange.jpeg',
-      blue: 'http://0.0.0.0:8081/blue.jpeg',
-      green: 'http://0.0.0.0:8081/green.jpeg',
-      yellow: 'http://0.0.0.0:8081/yellow.jpeg',
-      white: 'http://0.0.0.0:8081/white.jpeg',
-      pink: 'http://0.0.0.0:8081/pink.jpeg',
-      coffee: 'http://0.0.0.0:8081/coffee.jpeg',
+      cosmos: 'http://0.0.0.0:8080/linen.jpg',
+      red: 'http://0.0.0.0:8080/red.jpeg',
+      orange: 'http://0.0.0.0:8080/orange.jpeg',
+      blue: 'http://0.0.0.0:8080/blue.jpeg',
+      green: 'http://0.0.0.0:8080/green.jpeg',
+      yellow: 'http://0.0.0.0:8080/yellow.jpeg',
+      white: 'http://0.0.0.0:8080/white.jpeg',
+      pink: 'http://0.0.0.0:8080/pink.jpeg',
+      coffee: 'http://0.0.0.0:8080/coffee.jpeg',
     }).map(async ([name, url]) => {
       const image = await loadImage(url);
       const texture = gl.createTexture();
@@ -2014,38 +2014,51 @@ async function main() {
   /* state */
   const Scramble = document.getElementById('scramble');
   Scramble.addEventListener('click', event => {
-    app.puzzle.sticker = reset(app.textures);
-    for (var i = 0; i < 8; i++) {
-      const op = Math.floor(Math.random()*11);
-      if (op < 8) {
-        for (var j = 0; j < Math.floor(Math.random()*2) + 1; j++) {
-          twist(app.puzzle, op);
-	}
-      } else if (op == 8) {
-        X(app.puzzle);
-        for (var j = 0; j < Math.floor(Math.random()*2); j++) {
-          X(app.puzzle);
-	}
-      } else if (op == 9) {
-        Y(app.puzzle);
-        for (var j = 0; j < Math.floor(Math.random()*2); j++) {
-          Y(app.puzzle);
-	}
-      } else if (op == 10) {
-        Z(app.puzzle);
-        for (var j = 0; j < Math.floor(Math.random()*2); j++) {
-          Z(app.puzzle);
-	}
-      }
-    }
+    scramble(app);
   });
   const Reset = document.getElementById('reset');
   Reset.addEventListener('click', event => {
     app.puzzle.sticker = reset(app.textures);
+    app.puzzle.history = [];
   });
   const Undo = document.getElementById('undo');
   Undo.addEventListener('click', event => {
     undo(app.puzzle);
+  });
+  const Redo = document.getElementById('redo2');
+  Redo.addEventListener('click', event => {
+    const str = document.getElementById('redo1').value;
+    const arr = str.split(',');
+    for (var i = arr.shift(); i != null; i = arr.shift()) {
+      if (isDigit(i)) {
+        twist(app.puzzle, i);
+      } else {
+        if (i == "X") {
+          X(app.puzzle);
+	} else if (i == "x") {
+          X(app.puzzle);
+          X(app.puzzle);
+          X(app.puzzle);
+	} else if (i == "Y") {
+          Y(app.puzzle);
+	} else if (i == "y") {
+          Y(app.puzzle);
+          Y(app.puzzle);
+          Y(app.puzzle);
+	} else if (i == "Z") {
+          Z(app.puzzle);
+	} else if (i == "z") {
+          Z(app.puzzle);
+          Z(app.puzzle);
+          Z(app.puzzle);
+	}
+      }
+      app.puzzle.history.push(i);
+    }
+  });
+  const Show = document.getElementById('show');
+  Show.addEventListener('click', event => {
+    document.getElementById('history-in').value = app.puzzle.history;
   });
 
   /* view control */
@@ -2059,6 +2072,44 @@ async function main() {
   startLoop(app);
 }
 main();
+
+function scramble(app){
+    app.puzzle.sticker = reset(app.textures);
+    app.puzzle.history = [];
+    if (typeof scramble.previousOP == "undefined") {
+      scramble.previousOP = 0;
+    }
+    for (var i = 0; i < 8; i++) {
+      var op = Math.floor(Math.random()*10);
+      op = (scramble.previousOP+op)%11;
+      scramble.previousOP = op;
+      if (op < 8) {
+        for (var j = 0; j < Math.floor(Math.random()*2) + 1; j++) {
+          twist(app.puzzle, op);
+          app.puzzle.history.push(op);
+	}
+      } else if (op == 8) {
+        for (var j = 0; j < Math.floor(Math.random()*3) + 1; j++) {
+          X(app.puzzle);
+          app.puzzle.history.push("X");
+	}
+      } else if (op == 9) {
+        for (var j = 0; j < Math.floor(Math.random()*3) + 1; j++) {
+          Y(app.puzzle);
+          app.puzzle.history.push("Y");
+	}
+      } else if (op == 10) {
+        for (var j = 0; j < Math.floor(Math.random()*3) + 1; j++) {
+          Z(app.puzzle);
+          app.puzzle.history.push("Z");
+	}
+      }
+    }
+  }
+
+function isDigit(str){
+  return /^\d$/.test(str);
+}
 
 function undo(puzzle) {
     const action = puzzle.history.pop();
