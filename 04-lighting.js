@@ -2027,34 +2027,7 @@ async function main() {
   });
   const Redo = document.getElementById('redo2');
   Redo.addEventListener('click', event => {
-    const str = document.getElementById('redo1').value;
-    const arr = str.split(',');
-    for (var i = arr.shift(); i != null; i = arr.shift()) {
-      if (isDigit(i)) {
-        twist(app.puzzle, i);
-      } else {
-        if (i == "X") {
-          X(app.puzzle);
-	} else if (i == "x") {
-          X(app.puzzle);
-          X(app.puzzle);
-          X(app.puzzle);
-	} else if (i == "Y") {
-          Y(app.puzzle);
-	} else if (i == "y") {
-          Y(app.puzzle);
-          Y(app.puzzle);
-          Y(app.puzzle);
-	} else if (i == "Z") {
-          Z(app.puzzle);
-	} else if (i == "z") {
-          Z(app.puzzle);
-          Z(app.puzzle);
-          Z(app.puzzle);
-	}
-      }
-      app.puzzle.history.push(i);
-    }
+    interpret(app.puzzle, 'redo1');
   });
   const Show = document.getElementById('show');
   Show.addEventListener('click', event => {
@@ -2072,6 +2045,40 @@ async function main() {
   startLoop(app);
 }
 main();
+
+function interpret(puzzle, text) {
+    const str = document.getElementById(text).value;
+    const arr = str.split(',');
+    for (var i = arr.shift(); i != null; i = arr.shift()) {
+      if (isDigit(i)) {
+        twist(puzzle, i);
+        puzzle.history.push(i);
+      } else if (i.charAt(0) == "A") {
+        interpret(puzzle, i);
+      } else {
+        if (i == "X") {
+          X(puzzle);
+	} else if (i == "x") {
+          X(puzzle);
+          X(puzzle);
+          X(puzzle);
+	} else if (i == "Y") {
+          Y(puzzle);
+	} else if (i == "y") {
+          Y(puzzle);
+          Y(puzzle);
+          Y(puzzle);
+	} else if (i == "Z") {
+          Z(puzzle);
+	} else if (i == "z") {
+          Z(puzzle);
+          Z(puzzle);
+          Z(puzzle);
+	}
+        puzzle.history.push(i);
+      }
+    }
+  }
 
 function scramble(app){
     app.puzzle.sticker = reset(app.textures);
@@ -2202,38 +2209,6 @@ function handleKeyUp(app, event) {
     case 'KeyW':
     case 'KeyS':
       app.state.cameraVelocity[2] = 0;
-      break;
-    case 'Digit0':
-      twist(app.puzzle, 0);
-      app.puzzle.history.push("0");
-      break;
-    case 'Digit1':
-      twist(app.puzzle, 1);
-      app.puzzle.history.push("1");
-      break;
-    case 'Digit2':
-      twist(app.puzzle, 2);
-      app.puzzle.history.push("2");
-      break;
-    case 'Digit3':
-      twist(app.puzzle, 3);
-      app.puzzle.history.push("3");
-      break;
-    case 'Digit4':
-      twist(app.puzzle, 4);
-      app.puzzle.history.push("4");
-      break;
-    case 'Digit5':
-      twist(app.puzzle, 5);
-      app.puzzle.history.push("5");
-      break;
-    case 'Digit6':
-      twist(app.puzzle, 6);
-      app.puzzle.history.push("6");
-      break;
-    case 'Digit7':
-      twist(app.puzzle, 7);
-      app.puzzle.history.push("7");
       break;
   }
 }
